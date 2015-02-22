@@ -7,6 +7,18 @@ using System.Threading.Tasks;
 
 class Program
 {
+    const int royalFlushPoints = 9000;
+    const int streetFlushPoints = 1800;
+    const int fourOfAKindPoints = 720;
+    const int fullHousePoints = 180;
+    const int flushPoint = 126;
+    const int straightPoint = 90;
+    const int threeOfAKindPoint = 54;
+    const int twoPairPoint = 36;
+    const int highCardPoint = 18;
+    const int creditsPoints = 893;
+    const int betPoints = 18;
+
     static void Main()
     {
         string[,] deck =
@@ -87,7 +99,7 @@ class Program
         //malko sym testwal tuka dolu 67-82 da widq kyf razmer da e kartata i tn
         Console.WriteLine();
 
-        Console.BackgroundColor = ConsoleColor.Black;
+        Console.BackgroundColor = ConsoleColor.DarkGreen;
 
         Console.Clear();
         Console.WriteLine();
@@ -114,46 +126,46 @@ class Program
 
     private static void HomeScreen()
     {
-        PrintOnPosition(30, 1, "9000", ConsoleColor.Yellow);
-        PrintOnPosition(67, 1, "893", ConsoleColor.Yellow);
+        PrintOnPosition(30, 1, royalFlushPoints.ToString(), ConsoleColor.Yellow);
+        PrintOnPosition(67, 1, creditsPoints.ToString(), ConsoleColor.Yellow);
         PrintOnPosition(63, 0, "Credits", ConsoleColor.Yellow);
 
-        WriteFullLine("ROYAL FLUSH");
+        Console.WriteLine("ROYAL FLUSH");
 
         Console.WriteLine("STRAIGHT FLUSH");
-        PrintOnPosition(30, 2, "1800", ConsoleColor.Yellow);
+        PrintOnPosition(30, 2, streetFlushPoints.ToString(), ConsoleColor.Yellow);
         Console.WriteLine();
 
         Console.WriteLine("FOUR OF A KIND");
-        PrintOnPosition(30, 3, "720", ConsoleColor.Yellow);
+        PrintOnPosition(30, 3, fourOfAKindPoints.ToString(), ConsoleColor.Yellow);
 
 
         Console.WriteLine();
         Console.WriteLine("FULL HOUSE");
         PrintOnPosition(67, 3, "BET", ConsoleColor.Yellow);
-        PrintOnPosition(68, 4, "18", ConsoleColor.Yellow);
+        PrintOnPosition(68, 4, betPoints.ToString(), ConsoleColor.Yellow);
 
-        PrintOnPosition(30, 4, "180", ConsoleColor.Yellow);
+        PrintOnPosition(30, 4, fullHousePoints.ToString(), ConsoleColor.Yellow);
         Console.WriteLine();
 
         Console.WriteLine("FLUSH");
-        PrintOnPosition(30, 5, "126", ConsoleColor.Yellow);
+        PrintOnPosition(30, 5, flushPoint.ToString(), ConsoleColor.Yellow);
         Console.WriteLine();
 
         Console.WriteLine("STRAIGHT");
-        PrintOnPosition(30, 6, "90", ConsoleColor.Yellow);
+        PrintOnPosition(30, 6, straightPoint.ToString(), ConsoleColor.Yellow);
         Console.WriteLine();
 
         Console.WriteLine("THREE OF A KIND");
-        PrintOnPosition(30, 7, "54", ConsoleColor.Yellow);
+        PrintOnPosition(30, 7, threeOfAKindPoint.ToString(), ConsoleColor.Yellow);
         Console.WriteLine();
 
         Console.WriteLine("TWO PAIR");
-        PrintOnPosition(30, 8, "36", ConsoleColor.Yellow);
+        PrintOnPosition(30, 8, twoPairPoint.ToString(), ConsoleColor.Yellow);
         Console.WriteLine();
 
         Console.WriteLine("HIGH PAIR");
-        PrintOnPosition(30, 9, "18", ConsoleColor.Yellow);
+        PrintOnPosition(30, 9, highCardPoint.ToString(), ConsoleColor.Yellow);
         PrintOnPosition(40, 9, "WINNINGS:0 ", ConsoleColor.White);
 
         Console.WriteLine();
@@ -186,21 +198,13 @@ class Program
         Console.SetCursorPosition(x, y);
         Console.Write(text);
     }
-    static void WriteFullLine(string value) // Method, which makes Royal FLush line in RED
+   
+    static void PrintOnPosition(int x, int y, string c, ConsoleColor color = ConsoleColor.DarkGreen)//Method, which sets the High Score position
     {
-        //
-        // This method writes an entire line to the console with the string.
-        //
-        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.BackgroundColor = ConsoleColor.DarkGreen;
 
-        Console.WriteLine(value.PadRight(Console.WindowWidth - 40));
-        Console.ResetColor();
-    }
-    static void PrintOnPosition(int x, int y, string c, ConsoleColor color = ConsoleColor.Black)//Method, which sets the High Score position
-    {
         Console.SetCursorPosition(x, y);
         Console.ForegroundColor = color;
         Console.Write(c);
     }
-
 }
