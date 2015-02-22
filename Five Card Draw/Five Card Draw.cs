@@ -7,20 +7,23 @@ using System.Threading.Tasks;
 
 class Program
 {
-    const int royalFlushPoints = 9000;
-    const int streetFlushPoints = 1800;
-    const int fourOfAKindPoints = 720;
-    const int fullHousePoints = 180;
-    const int flushPoint = 126;
-    const int straightPoint = 90;
-    const int threeOfAKindPoint = 54;
-    const int twoPairPoint = 36;
-    const int highCardPoint = 18;
-    const int creditsPoints = 893;
-    const int betPoints = 18;
+    static Random r = new Random();
+
+    const int royalFlushPoints = 500;
+    const int streetFlushPoints = 100;
+    const int fourOfAKindPoints = 40;
+    const int fullHousePoints = 12;
+    const int flushPoint = 7;
+    const int straightPoint = 5;
+    const int threeOfAKindPoint = 3;
+    const int twoPairPoint = 2;
+    const int highCardPoint = 1;
+    const int creditsPoints = 42;
+    const int betPoints = 42;
 
     static void Main()
     {
+
         string[,] deck =
             {
                 {"2\u2660","3\u2660","4\u2660","5\u2660","6\u2660","7\u2660","8\u2660","9\u2660","10\u2660","J\u2660","Q\u2660","K\u2660","A\u2660"},
@@ -30,31 +33,118 @@ class Program
             };
 
         string title = "ARCH DEVIL's POKER";
-        int heigth = 30;
-        int width = 70;
+        int heigth = 25;
+        int width = 60;
         int cardWidth = 8;
-        int cardHeight = 5;
+        int cardHeight = 7;
+        int winnings = 0;
+        int bet = 1;
+        int coins = 100;
 
+        Console.CursorVisible = false;
         Console.Title = title;
         Console.WindowHeight = heigth;
         Console.WindowWidth = width;
         Console.BufferHeight = heigth;
         Console.BufferWidth = width;
-        Random r = new Random();
 
-        string text = "";// towa e za GAME OVER 
-        int x = width / 2;
-        int y = heigth / 2;
+        //welcome screen - OK
 
-        // deck[r.Next(0, 4), r.Next(0, 13)] randoma ot testeto
+        WelcomeScreen(title, heigth, width);
 
-        //welcome screen
+        //HelpScreen - SpaceBar draws, keys 1-5 hold cards, Esc to return ot welcome screen
 
+        //MainScreen - winnings block - coins, bet, current winnings and 5 card backs..
+
+        while (coins > 0)
+        {
+            Console.BackgroundColor = ConsoleColor.DarkGreen;
+            Console.Clear();
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.BackgroundColor = ConsoleColor.DarkGreen;
+            Console.WriteLine(" ROYAL FLUSH");
+            PrintOnPosition(30, 1, "x" + royalFlushPoints.ToString());
+            PrintOnPosition(width - 10, 2, creditsPoints.ToString().PadLeft(10));
+            PrintOnPosition(width - 5, 1, coins.ToString().PadLeft(5));
+
+
+
+            Console.WriteLine(" STRAIGHT FLUSH");
+            PrintOnPosition(30, 2, "x" + streetFlushPoints.ToString());
+            Console.WriteLine();
+
+            Console.WriteLine(" 4 OF A KIND");
+            PrintOnPosition(30, 3, "x" + fourOfAKindPoints.ToString());
+
+
+            Console.WriteLine();
+            Console.WriteLine(" FULL HOUSE");
+            PrintOnPosition(width - 3, 5, "BET");
+            PrintOnPosition(width - 2, 6, betPoints.ToString());
+
+            PrintOnPosition(30, 4, "x" + fullHousePoints.ToString());
+            Console.WriteLine();
+
+            Console.WriteLine(" FLUSH");
+            PrintOnPosition(30, 5, "x" + flushPoint.ToString());
+            Console.WriteLine();
+
+            Console.WriteLine(" STRAIGHT");
+            PrintOnPosition(30, 6, "x" + straightPoint.ToString());
+            Console.WriteLine();
+
+            Console.WriteLine(" 3 OF A KIND");
+            PrintOnPosition(30, 7, "x" + threeOfAKindPoint.ToString());
+            Console.WriteLine();
+
+            Console.WriteLine(" TWO PAIR");
+            PrintOnPosition(30, 8, "x" + twoPairPoint.ToString());
+            Console.WriteLine();
+
+            Console.WriteLine(" HIGH PAIR");
+            PrintOnPosition(30, 9, "x" + highCardPoint.ToString());
+            PrintOnPosition(40, 9, "WINNINGS: " + winnings);
+
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+
+
+
+            for (int i = 0; i < (cardWidth + 3) * 5; i += 11)
+            {
+                CardBack(cardHeight, cardWidth, i + 4, 14);
+            }
+
+
+
+            //Draw - 5 cards - OK
+            var drawedCards = new List<string>();
+
+            var playCards = DrawCards(deck, r, drawedCards);
+
+            //Hold
+
+            //Redraw
+
+            //Check for Winnings - CheckForWinnings(play[]) - moje i da e [,] - 6 widim
+
+            //Game Over or Next Deal
+
+
+
+            Console.ReadLine();
+        }
+        
+    }
+
+    private static void WelcomeScreen(string title, int heigth, int width)
+    {
         Console.ForegroundColor = ConsoleColor.Magenta;
-        WriteAtPlace(title, (width - 18) / 2, heigth / 2 - 4);
-        WriteAtPlace("how to play - type help", (width - 18) / 2, heigth / 2 - 1);
-        WriteAtPlace("Press enter to play", (width - 18) / 2, heigth / 2 + 1);
-        WriteAtPlace(text, (width - 18) / 2, heigth / 2 + 3);
+        PrintOnPosition((width - 18) / 2, heigth / 2 - 4, title);
+        PrintOnPosition((width - 18) / 2, heigth / 2 - 1, "how to play - h");
+        PrintOnPosition((width - 18) / 2, heigth / 2 + 1, "press ENTER to play");
 
         // Joro
 
@@ -72,115 +162,34 @@ class Program
         }
         if (startKey.Key == ConsoleKey.Escape)
         {
-            return;
             Console.WriteLine("You pressed escape");
         }
-
-        // TOVA BIH GO IZTRIL
-        //string choice = Console.ReadLine();
-        //if (choice == "help")
-        //{
-        //    //HelpScreen();
-        //}
-        
-
-        //HelpScreen - SpaceBar draws, keys 1-5 hold cards, Esc to return ot welcome screen
-
-        //MainScreen - winnings block - coins, bet, current winnings and 5 card backs..
-
-        //Draw - 5 cards
-
-        //Hold and Redraw
-
-        //Check for Winnings - CheckForWinnings(play[]) - moje i da e [,] - 6 widim
-
-        //Game Over or Next Deal
-
-        //malko sym testwal tuka dolu 67-82 da widq kyf razmer da e kartata i tn
-        Console.WriteLine();
-
-        Console.BackgroundColor = ConsoleColor.DarkGreen;
-
-        Console.Clear();
-        Console.WriteLine();
-        Console.ResetColor();
-
-        HomeScreen();
-
-        Console.ReadLine();
-
-        for (int i = 0; i < cardHeight; i++)
-        {
-            for (int j = 0; j < cardWidth; j++)
-            {
-
-                Console.BackgroundColor = ConsoleColor.White;
-                Console.Write(' ');
-
-            }
-            Console.WriteLine();
-        }
-        Console.WriteLine();
-        Console.ResetColor();
     }
 
-    private static void HomeScreen()
+    static void CardBack(int height, int width, int x, int y)
     {
-        PrintOnPosition(30, 1, royalFlushPoints.ToString(), ConsoleColor.Yellow);
-        PrintOnPosition(67, 1, creditsPoints.ToString(), ConsoleColor.Yellow);
-        PrintOnPosition(63, 0, "Credits", ConsoleColor.Yellow);
-
-        Console.WriteLine("ROYAL FLUSH");
-
-        Console.WriteLine("STRAIGHT FLUSH");
-        PrintOnPosition(30, 2, streetFlushPoints.ToString(), ConsoleColor.Yellow);
-        Console.WriteLine();
-
-        Console.WriteLine("FOUR OF A KIND");
-        PrintOnPosition(30, 3, fourOfAKindPoints.ToString(), ConsoleColor.Yellow);
-
-
-        Console.WriteLine();
-        Console.WriteLine("FULL HOUSE");
-        PrintOnPosition(67, 3, "BET", ConsoleColor.Yellow);
-        PrintOnPosition(68, 4, betPoints.ToString(), ConsoleColor.Yellow);
-
-        PrintOnPosition(30, 4, fullHousePoints.ToString(), ConsoleColor.Yellow);
-        Console.WriteLine();
-
-        Console.WriteLine("FLUSH");
-        PrintOnPosition(30, 5, flushPoint.ToString(), ConsoleColor.Yellow);
-        Console.WriteLine();
-
-        Console.WriteLine("STRAIGHT");
-        PrintOnPosition(30, 6, straightPoint.ToString(), ConsoleColor.Yellow);
-        Console.WriteLine();
-
-        Console.WriteLine("THREE OF A KIND");
-        PrintOnPosition(30, 7, threeOfAKindPoint.ToString(), ConsoleColor.Yellow);
-        Console.WriteLine();
-
-        Console.WriteLine("TWO PAIR");
-        PrintOnPosition(30, 8, twoPairPoint.ToString(), ConsoleColor.Yellow);
-        Console.WriteLine();
-
-        Console.WriteLine("HIGH PAIR");
-        PrintOnPosition(30, 9, highCardPoint.ToString(), ConsoleColor.Yellow);
-        PrintOnPosition(40, 9, "WINNINGS:0 ", ConsoleColor.White);
-
-        Console.WriteLine();
-        Console.WriteLine();
-        Console.WriteLine();
+        for (int i = 0; i < width; i++) //cadrBAck start
+        {
+            for (int j = 0; j < height; j++)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.BackgroundColor = ConsoleColor.White;
+                PrintOnPosition(x + i, y + j, "*");
+            }
+        } Console.WriteLine();
     }
 
     //HelpScreen - SpaceBar draws, keys 1-5 hold cards, Esc to return ot welcome screen
     static void HelpMenu()
     {
         Console.Clear();
-        PrintOnPosition(20, 6, "Keys 1 to 5: hold cards", ConsoleColor.Yellow);
-        PrintOnPosition(20, 8, "Spacebar: draw cards", ConsoleColor.Yellow);
-        PrintOnPosition(20, 10, "You can change any card", ConsoleColor.Yellow);
-        PrintOnPosition(20, 12, "Press enter to play", ConsoleColor.Yellow);
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        //Console.BackgroundColor = ConsoleColor.Yellow;
+        PrintOnPosition(20, 6, "Keys 1 to 5: hold cards");
+        PrintOnPosition(20, 8, "Spacebar: draw cards");
+        PrintOnPosition(20, 10, "You can change any card");
+        PrintOnPosition(20, 12, "Press enter to play");
+
 
         while (true)
         {
@@ -192,19 +201,32 @@ class Program
             }
         }
     }
-    
-    private static void WriteAtPlace(string text, int x, int y)
-    {
-        Console.SetCursorPosition(x, y);
-        Console.Write(text);
-    }
    
-    static void PrintOnPosition(int x, int y, string c, ConsoleColor color = ConsoleColor.DarkGreen)//Method, which sets the High Score position
+    static void PrintOnPosition(int x, int y, string c)
     {
-        Console.BackgroundColor = ConsoleColor.DarkGreen;
-
         Console.SetCursorPosition(x, y);
-        Console.ForegroundColor = color;
         Console.Write(c);
     }
+
+    private static string[] DrawCards(string[,] deck, Random r, List<string> drawedCards)
+    {
+        var playCards = new string[5];
+
+        for (int i = 0; i < 5; i++)
+        {
+            playCards[i] = deck[r.Next(0, 4), r.Next(0, 13)];
+            if (drawedCards.Contains(playCards[i]))
+            {
+                i--;
+                continue;
+            }
+            else
+            {
+                drawedCards.Add(playCards[i]);
+            }
+
+        }
+        return playCards;
+    }
+
 }
