@@ -19,17 +19,17 @@ class Program
     const int twoPairPoint = 2;
     const int highCardPoint = 1;
     const int creditsPoints = 42;
-    const int betPoints = 42;
+    const int betPoints = 0;
 
     static void Main()
     {
 
         string[,] deck =
             {
-                {"2\u2660","3\u2660","4\u2660","5\u2660","6\u2660","7\u2660","8\u2660","9\u2660","10\u2660","J\u2660","Q\u2660","K\u2660","A\u2660"},
-                {"2\u2665","3\u2665","4\u2665","5\u2665","6\u2665","7\u2665","8\u2665","9\u2665","10\u2665","J\u2665","Q\u2665","K\u2665","A\u2665"},
-                {"2\u2665","3\u2666","4\u2666","5\u2666","6\u2666","7\u2666","8\u2666","9\u2666","10\u2666","J\u2666","Q\u2666","K\u2666","A\u2666"},
-                {"2\u2663","3\u2663","4\u2663","5\u2663","6\u2663","7\u2663","8\u2663","9\u2663","10\u2663","J\u2663","Q\u2663","K\u2663","A\u2663"}
+                {"2\u2660","3\u2660","4\u2660","5\u2660","6\u2660","7\u2660","8\u2660","9\u2660","T\u2660","J\u2660","Q\u2660","K\u2660","A\u2660"},
+                {"2\u2665","3\u2665","4\u2665","5\u2665","6\u2665","7\u2665","8\u2665","9\u2665","T\u2665","J\u2665","Q\u2665","K\u2665","A\u2665"},
+                {"2\u2665","3\u2666","4\u2666","5\u2666","6\u2666","7\u2666","8\u2666","9\u2666","T\u2666","J\u2666","Q\u2666","K\u2666","A\u2666"},
+                {"2\u2663","3\u2663","4\u2663","5\u2663","6\u2663","7\u2663","8\u2663","9\u2663","T\u2663","J\u2663","Q\u2663","K\u2663","A\u2663"}
             };
 
         string title = "ARCH DEVIL's POKER";
@@ -38,7 +38,7 @@ class Program
         int cardWidth = 8;
         int cardHeight = 7;
         int winnings = 0;
-        int bet = 1;
+        int bet = 0;
         int coins = 100;
 
         Console.CursorVisible = false;
@@ -83,7 +83,7 @@ class Program
             Console.WriteLine();
             Console.WriteLine(" FULL HOUSE");
             PrintOnPosition(width - 3, 5, "BET");
-            PrintOnPosition(width - 2, 6, betPoints.ToString());
+            PrintOnPosition(width - 2, 6, betPoints.ToString("D2").PadLeft(2));
 
             PrintOnPosition(30, 4, "x" + fullHousePoints.ToString());
             Console.WriteLine();
@@ -119,12 +119,29 @@ class Program
                 CardBack(cardHeight, cardWidth, i + 4, 14);
             }
 
-
-
             //Draw - 5 cards - OK
             var drawedCards = new List<string>();
 
             var playCards = DrawCards(deck, r, drawedCards);
+
+            //print card faces
+
+            Console.ReadLine();
+            int count = 0;
+            for (int i = 0; i < (cardWidth + 3) * 5; i += 11)
+            {
+                if (holdCards[count] == true)
+                    count++; continue;
+
+                if (playCards[count].Contains('\u2660') || playCards[count].Contains('\u2663')) Console.ForegroundColor = ConsoleColor.Black;
+                
+                else Console.ForegroundColor = ConsoleColor.Red;
+
+                CardFace(cardHeight, cardWidth, i + 4, 14, playCards[count].ToString());
+                count++;
+            }
+
+            // Bet
 
             //Hold
 
@@ -139,6 +156,22 @@ class Program
             Console.ReadLine();
         }
         
+    }
+
+    private static void CardFace(int cardHeight, int cardWidth, int x, int y, string card)
+    {
+        for (int i = 0; i < cardHeight; i++)
+        {
+            for (int j = 0; j < cardWidth; j++)
+            {
+                PrintOnPosition(x + j, y + i, " ");
+                if (card[0] == 'T') card = "10" + card[1];
+                PrintOnPosition(x, y, card);
+                PrintOnPosition(x + 3, y + 3, card);
+                if (card[0] == '1') PrintOnPosition(x + 5, y + 6, card);
+                else PrintOnPosition(x + 6, y + 6, card);
+            }
+        }
     }
 
     private static void WelcomeScreen(string title, int heigth, int width)
@@ -170,6 +203,8 @@ class Program
 
     static void CardBack(int height, int width, int x, int y)
     {
+        Console.BackgroundColor = ConsoleColor.White;
+        Console.ForegroundColor = ConsoleColor.DarkCyan;
         for (int i = 0; i < width; i++) //cadrBAck start
         {
             for (int j = 0; j < height; j++)
