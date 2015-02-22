@@ -109,19 +109,26 @@ class Program
 
         Console.ReadLine();
 
-        for (int i = 0; i < cardHeight; i++)
-        {
-            for (int j = 0; j < cardWidth; j++)
-            {
 
-                Console.BackgroundColor = ConsoleColor.White;
-                Console.Write(' ');
+        CardBack(cardHeight, cardWidth, 9, 14);
+        CardBack(cardHeight, cardWidth, 19, 14);
+        CardBack(cardHeight, cardWidth, 29, 14);
+        CardBack(cardHeight, cardWidth, 39, 14);
+        CardBack(cardHeight, cardWidth, 49, 14);
 
-            }
-            Console.WriteLine();
-        }
         Console.WriteLine();
         Console.ResetColor();
+    }
+
+    static void CardBack(int height, int width, int x, int y)
+    {
+        for (int i = 0; i < width; i++) //cadrBAck start
+        {
+            for (int j = 0; j < height; j++)
+            {
+                PrintOnPosition(x + i, y + j, "*", ConsoleColor.Red);
+            }
+        }   //cardBack end
     }
 
     private static void HomeScreen()
