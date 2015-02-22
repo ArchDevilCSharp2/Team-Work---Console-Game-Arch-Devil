@@ -54,7 +54,6 @@ class Program
 
         //HelpScreen - SpaceBar draws, keys 1-5 hold cards, Esc to return ot welcome screen
 
-<<<<<<< HEAD
         //MainScreen - winnings block - coins, bet, current winnings and 5 card backs..
 
         while (coins > 0)
@@ -64,6 +63,8 @@ class Program
 
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.BackgroundColor = ConsoleColor.DarkGreen;
+
+            Console.WriteLine();
             Console.WriteLine(" ROYAL FLUSH");
             PrintOnPosition(30, 1, "x" + royalFlushPoints.ToString());
             PrintOnPosition(width - 10, 2, creditsPoints.ToString().PadLeft(10));
@@ -173,106 +174,11 @@ class Program
         {
             for (int j = 0; j < height; j++)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.BackgroundColor = ConsoleColor.White;
                 PrintOnPosition(x + i, y + j, "*");
-            }
-        } Console.WriteLine();
-=======
-        //MainScreen - winnings block - coins, bet, current winnings and 5 card backs..
-
-        //Draw - 5 cards
-
-        //Hold and Redraw
-
-        //Check for Winnings - CheckForWinnings(play[]) - moje i da e [,] - 6 widim
-
-        //Game Over or Next Deal
-
-        //malko sym testwal tuka dolu 67-82 da widq kyf razmer da e kartata i tn
-        Console.WriteLine();
-
-        Console.BackgroundColor = ConsoleColor.DarkGreen;
-
-        Console.Clear();
-        Console.WriteLine();
-        Console.ResetColor();
-
-        HomeScreen();
-
-        Console.ReadLine();
-
-
-        CardBack(cardHeight, cardWidth, 9, 14);
-        CardBack(cardHeight, cardWidth, 19, 14);
-        CardBack(cardHeight, cardWidth, 29, 14);
-        CardBack(cardHeight, cardWidth, 39, 14);
-        CardBack(cardHeight, cardWidth, 49, 14);
-
-        Console.WriteLine();
-        Console.ResetColor();
-    }
-
-    static void CardBack(int height, int width, int x, int y)
-    {
-        for (int i = 0; i < width; i++) //cadrBAck start
-        {
-            for (int j = 0; j < height; j++)
-            {
-                PrintOnPosition(x + i, y + j, "*", ConsoleColor.Red);
             }
         }   //cardBack end
     }
 
-    private static void HomeScreen()
-    {
-        PrintOnPosition(30, 1, royalFlushPoints.ToString(), ConsoleColor.Yellow);
-        PrintOnPosition(67, 1, creditsPoints.ToString(), ConsoleColor.Yellow);
-        PrintOnPosition(63, 0, "Credits", ConsoleColor.Yellow);
-
-        Console.WriteLine("ROYAL FLUSH");
-
-        Console.WriteLine("STRAIGHT FLUSH");
-        PrintOnPosition(30, 2, streetFlushPoints.ToString(), ConsoleColor.Yellow);
-        Console.WriteLine();
-
-        Console.WriteLine("FOUR OF A KIND");
-        PrintOnPosition(30, 3, fourOfAKindPoints.ToString(), ConsoleColor.Yellow);
-
-
-        Console.WriteLine();
-        Console.WriteLine("FULL HOUSE");
-        PrintOnPosition(67, 3, "BET", ConsoleColor.Yellow);
-        PrintOnPosition(68, 4, betPoints.ToString(), ConsoleColor.Yellow);
-
-        PrintOnPosition(30, 4, fullHousePoints.ToString(), ConsoleColor.Yellow);
-        Console.WriteLine();
-
-        Console.WriteLine("FLUSH");
-        PrintOnPosition(30, 5, flushPoint.ToString(), ConsoleColor.Yellow);
-        Console.WriteLine();
-
-        Console.WriteLine("STRAIGHT");
-        PrintOnPosition(30, 6, straightPoint.ToString(), ConsoleColor.Yellow);
-        Console.WriteLine();
-
-        Console.WriteLine("THREE OF A KIND");
-        PrintOnPosition(30, 7, threeOfAKindPoint.ToString(), ConsoleColor.Yellow);
-        Console.WriteLine();
-
-        Console.WriteLine("TWO PAIR");
-        PrintOnPosition(30, 8, twoPairPoint.ToString(), ConsoleColor.Yellow);
-        Console.WriteLine();
-
-        Console.WriteLine("HIGH PAIR");
-        PrintOnPosition(30, 9, highCardPoint.ToString(), ConsoleColor.Yellow);
-        PrintOnPosition(40, 9, "WINNINGS:0 ", ConsoleColor.White);
-
-        Console.WriteLine();
-        Console.WriteLine();
-        Console.WriteLine();
->>>>>>> 9dbd029ec901fc7b6519988f5b2e2cbec680009d
-    }
 
     //HelpScreen - SpaceBar draws, keys 1-5 hold cards, Esc to return ot welcome screen
     static void HelpMenu()
