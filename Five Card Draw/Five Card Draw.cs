@@ -44,11 +44,33 @@ class Program
         WriteAtPlace("Press enter to play", (width - 18) / 2, heigth / 2 + 1);
         WriteAtPlace(text, (width - 18) / 2, heigth / 2 + 3);
 
-        string choice = Console.ReadLine();
-        if (choice == "help")
+        // Joro
+
+        ConsoleKeyInfo startKey;
+        startKey = Console.ReadKey();
+
+        if (startKey.Key == ConsoleKey.H)
         {
-            //HelpScreen();
+            // Console.WriteLine("You pressed H");
+            HelpMenu();
         }
+        if (startKey.Key == ConsoleKey.Enter)
+        {
+            Console.WriteLine("You pressed enter");
+        }
+        if (startKey.Key == ConsoleKey.Escape)
+        {
+            return;
+            Console.WriteLine("You pressed escape");
+        }
+
+        // TOVA BIH GO IZTRIL
+        //string choice = Console.ReadLine();
+        //if (choice == "help")
+        //{
+        //    //HelpScreen();
+        //}
+        
 
         //HelpScreen - SpaceBar draws, keys 1-5 hold cards, Esc to return ot welcome screen
 
@@ -139,6 +161,26 @@ class Program
         Console.WriteLine();
     }
 
+    //HelpScreen - SpaceBar draws, keys 1-5 hold cards, Esc to return ot welcome screen
+    static void HelpMenu()
+    {
+        Console.Clear();
+        PrintOnPosition(20, 6, "Keys 1 to 5: hold cards", ConsoleColor.Yellow);
+        PrintOnPosition(20, 8, "Spacebar: draw cards", ConsoleColor.Yellow);
+        PrintOnPosition(20, 10, "You can change any card", ConsoleColor.Yellow);
+        PrintOnPosition(20, 12, "Press enter to play", ConsoleColor.Yellow);
+
+        while (true)
+        {
+            ConsoleKeyInfo key;
+            key = Console.ReadKey();
+            if (key.Key == ConsoleKey.Enter)
+            {
+                break;
+            }
+        }
+    }
+    
     private static void WriteAtPlace(string text, int x, int y)
     {
         Console.SetCursorPosition(x, y);
