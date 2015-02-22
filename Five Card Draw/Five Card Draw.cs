@@ -67,8 +67,8 @@ class Program
             Console.WriteLine();
             Console.WriteLine(" ROYAL FLUSH");
             PrintOnPosition(30, 1, "x" + royalFlushPoints.ToString());
-            PrintOnPosition(width - 10, 2, creditsPoints.ToString().PadLeft(10));
-            PrintOnPosition(width - 5, 1, coins.ToString().PadLeft(5));
+            PrintOnPosition(width - 10, 2, coins.ToString().PadLeft(10));
+            PrintOnPosition(width - 5, 1, "Coins");
 
 
 
