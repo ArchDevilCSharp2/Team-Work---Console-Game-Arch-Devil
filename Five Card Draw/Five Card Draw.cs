@@ -60,7 +60,6 @@ class Program
 
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.BackgroundColor = ConsoleColor.DarkGreen;
-
             Console.WriteLine();
             Console.WriteLine(" ROYAL FLUSH");
             PrintOnPosition(30, 1, "x" + royalFlushPoints.ToString());
