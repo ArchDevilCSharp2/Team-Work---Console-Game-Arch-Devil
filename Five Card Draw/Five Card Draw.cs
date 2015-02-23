@@ -18,8 +18,7 @@ class Program
     const int threeOfAKindPoint = 3;
     const int twoPairPoint = 2;
     const int highCardPoint = 1;
-    const int creditsPoints = 42;
-    const int betPoints = 0;
+
 
     static void Main()
     {
@@ -37,7 +36,7 @@ class Program
         int cardWidth = 8;
         int cardHeight = 7;
         int winnings = 0;
-        int bet = 0;
+        int bet = 1;
         int coins = 100;
         bool[] holdCards = new bool[5];
 
@@ -77,7 +76,7 @@ class Program
             Console.WriteLine();
             Console.WriteLine(" FULL HOUSE");
             PrintOnPosition(width - 3, 5, "BET");
-            PrintOnPosition(width - 2, 6, betPoints.ToString("D2").PadLeft(2));
+            PrintOnPosition(width - 1, 6, bet.ToString());
 
             PrintOnPosition(30, 4, "x" + fullHousePoints.ToString());
             Console.WriteLine();
@@ -176,17 +175,18 @@ class Program
 
         do
         {
-            keyPressed = Console.ReadKey();
+            keyPressed = Console.ReadKey(true);
 
             if (keyPressed.Key == ConsoleKey.UpArrow && bet < 10)
             {
                 bet++;
-                PrintOnPosition(width - 2, 6, bet.ToString("D2").PadLeft(2));
+                if (bet == 10) PrintOnPosition(width - 2, 6, bet.ToString().PadLeft(2));
+                else PrintOnPosition(width - 2, 6, bet.ToString(" " + bet).PadLeft(2));
             }
-            if (keyPressed.Key == ConsoleKey.DownArrow && bet > 0)
+            if (keyPressed.Key == ConsoleKey.DownArrow && bet > 1)
             {
                 bet--;
-                PrintOnPosition(width - 2, 6, bet.ToString("D2").PadLeft(2));
+                PrintOnPosition(width - 2, 6, bet.ToString(" " + bet).PadLeft(2));
             }
 
         } while (keyPressed.Key != ConsoleKey.Spacebar);
@@ -201,7 +201,7 @@ class Program
 
         do
         {
-            keyPressed = Console.ReadKey();
+            keyPressed = Console.ReadKey(true);
 
             if (keyPressed.Key == ConsoleKey.NumPad1 || keyPressed.Key == ConsoleKey.D1)
             {
@@ -305,7 +305,7 @@ class Program
         // Joro
 
         ConsoleKeyInfo startKey;
-        startKey = Console.ReadKey();
+        startKey = Console.ReadKey(true);
 
         if (startKey.Key == ConsoleKey.H)
         {
@@ -351,7 +351,7 @@ class Program
         while (true)
         {
             ConsoleKeyInfo key;
-            key = Console.ReadKey();
+            key = Console.ReadKey(true);
             if (key.Key == ConsoleKey.Enter)
             {
                 break;
