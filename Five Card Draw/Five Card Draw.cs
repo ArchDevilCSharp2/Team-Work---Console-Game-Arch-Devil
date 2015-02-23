@@ -49,7 +49,6 @@ class Program
         Console.BufferWidth = width;
 
         //welcome screen - OK
-
         WelcomeScreen(title, heigth, width);
 
         //HelpScreen - SpaceBar draws, keys 1-5 hold cards, Esc to return ot welcome screen
@@ -58,6 +57,7 @@ class Program
 
         while (coins > 0)
         {
+            Array.Clear(holdCards, 0, holdCards.Length);
             Console.BackgroundColor = ConsoleColor.DarkGreen;
             Console.Clear();
 
@@ -122,58 +122,25 @@ class Program
             Console.BackgroundColor = ConsoleColor.DarkGreen;
             Console.ForegroundColor = ConsoleColor.Yellow;
 
+            // Bet
+            bet = Bet(bet, width, heigth);
+
             //Draw - 5 cards - OK
             var drawedCards = new List<string>();
 
-            var playCards = DrawCards(deck, r, drawedCards);
-
-            // Bet
-
-            bet = Bet(bet, width, heigth);
+            var playCards = DrawCards(deck, r, drawedCards, holdCards);
 
             //print card faces
-
-
-            int count = 0;
-            for (int i = 0; i < (cardWidth + 3) * 5; i += 11)
-            {
-                if (holdCards[count] == true)
-                {
-                    count++; continue;
-                }
-                    
-                if (playCards[count].Contains('\u2660') || playCards[count].Contains('\u2663')) Console.ForegroundColor = ConsoleColor.Black;
-
-                else Console.ForegroundColor = ConsoleColor.Red;
-
-                CardFace(cardHeight, cardWidth, i + 4, 14, playCards[count].ToString());
-                count++;
-            }
-
+            PutFaceCard(cardWidth, cardHeight, holdCards, playCards);
 
             //Hold
-            Console.BackgroundColor = ConsoleColor.DarkGreen;
-            Console.ForegroundColor = ConsoleColor.Yellow;
-
             holdCards = HoldCard(holdCards);
 
+            //redraw
+            playCards = DrawCards(deck, r, drawedCards, holdCards);
 
             //print card faces
-
-            count = 0;
-            for (int i = 0; i < (cardWidth + 3) * 5; i += 11)
-            {
-                if (holdCards[count] == true)
-                    count++; continue;
-
-                if (playCards[count].Contains('\u2660') || playCards[count].Contains('\u2663')) Console.ForegroundColor = ConsoleColor.Black;
-                else Console.ForegroundColor = ConsoleColor.Red;
-
-                CardFace(cardHeight, cardWidth, i + 4, 14, playCards[count].ToString());
-                count++;
-            }
-
-            //Redraw
+            PutFaceCard(cardWidth, cardHeight, holdCards, playCards);
 
             //Check for Winnings - CheckForWinnings(play[]) - moje i da e [,] - 6 widim
 
@@ -184,6 +151,21 @@ class Program
             Console.ReadLine();
         }
         
+    }
+
+    private static void PutFaceCard(int cardWidth, int cardHeight, bool[] holdCards, string[] playCards)
+    {
+        for (int i = 0, j = 0; j < 5; i += 11, j++)
+        {
+            if (holdCards[j] == true) continue;
+
+            if (playCards[j].Contains("\u2660") || playCards[j].Contains("\u2663")) Console.ForegroundColor = ConsoleColor.Black;
+            else Console.ForegroundColor = ConsoleColor.Red;
+
+            CardFace(cardHeight, cardWidth, i + 4, 14, playCards[j].ToString());
+        }
+        Console.BackgroundColor = ConsoleColor.DarkGreen;
+        Console.ForegroundColor = ConsoleColor.Yellow;
     }
 
     static int Bet(int bet, int width, int heigth)
@@ -224,12 +206,12 @@ class Program
                 if (cards[0] == false)
                 {
                     cards[0] = true;
-                    PrintOnPosition(5, 21, "Hold");
+                    PrintOnPosition(6, 21, "Hold");
                 }
                 else
                 {
                     cards[0] = false;
-                    PrintOnPosition(5, 21, "    ");
+                    PrintOnPosition(6, 21, "    ");
                 }
             }
             if (keyPressed.Key == ConsoleKey.NumPad2 || keyPressed.Key == ConsoleKey.D2)
@@ -237,12 +219,12 @@ class Program
                 if (cards[1] == false)
                 {
                     cards[1] = true;
-                    PrintOnPosition(16, 21, "Hold");
+                    PrintOnPosition(17, 21, "Hold");
                 }
                 else
                 {
                     cards[1] = false;
-                    PrintOnPosition(16, 21, "    ");
+                    PrintOnPosition(17, 21, "    ");
                 }
             }
             if (keyPressed.Key == ConsoleKey.NumPad3 || keyPressed.Key == ConsoleKey.D3)
@@ -250,12 +232,12 @@ class Program
                 if (cards[2] == false)
                 {
                     cards[2] = true;
-                    PrintOnPosition(27, 21, "Hold");
+                    PrintOnPosition(28, 21, "Hold");
                 }
                 else
                 {
                     cards[2] = false;
-                    PrintOnPosition(27, 21, "    ");
+                    PrintOnPosition(28, 21, "    ");
                 }
             }
             if (keyPressed.Key == ConsoleKey.NumPad4 || keyPressed.Key == ConsoleKey.D4)
@@ -263,12 +245,12 @@ class Program
                 if (cards[3] == false)
                 {
                     cards[3] = true;
-                    PrintOnPosition(38, 21, "Hold");
+                    PrintOnPosition(39, 21, "Hold");
                 }
                 else
                 {
                     cards[3] = false;
-                    PrintOnPosition(38, 21, "    ");
+                    PrintOnPosition(39, 21, "    ");
                 }
             }
             if (keyPressed.Key == ConsoleKey.NumPad5 || keyPressed.Key == ConsoleKey.D5)
@@ -276,12 +258,12 @@ class Program
                 if (cards[4] == false)
                 {
                     cards[4] = true;
-                    PrintOnPosition(49, 21, "Hold");
+                    PrintOnPosition(50, 21, "Hold");
                 }
                 else
                 {
                     cards[4] = false;
-                    PrintOnPosition(49, 21, "    ");
+                    PrintOnPosition(50, 21, "    ");
                 }
             }
 
@@ -295,16 +277,17 @@ class Program
     private static void CardFace(int cardHeight, int cardWidth, int x, int y, string card)
     
     {
+        string cardOk = card;
+        if (cardOk[0] == 'T') cardOk = "10" + card[1];
         Console.BackgroundColor = ConsoleColor.White;
         for (int i = 0; i < cardHeight; i++)
         {
             for (int j = 0; j < cardWidth; j++)
             {
                 PrintOnPosition(x + j, y + i, " ");
-                if (card[0] == 'T') card = "10" + card[1];
-                PrintOnPosition(x, y, card);
-                PrintOnPosition(x + 3, y + 3, card);
-                if (card[0] == '1') PrintOnPosition(x + 5, y + 6, card);
+                PrintOnPosition(x, y, cardOk);
+                PrintOnPosition(x + 3, y + 3, cardOk);
+                if (cardOk[0] == '1') PrintOnPosition(x + 5, y + 6, cardOk);
                 else PrintOnPosition(x + 6, y + 6, card);
             }
         }
@@ -380,12 +363,14 @@ class Program
         Console.Write(c);
     }
 
-    private static string[] DrawCards(string[,] deck, Random r, List<string> drawedCards)
+    private static string[] DrawCards(string[,] deck, Random r, List<string> drawedCards, bool[] holdCards)
     {
         var playCards = new string[5];
 
         for (int i = 0; i < 5; i++)
         {
+            if (holdCards[i] == true) continue;
+ 
             playCards[i] = deck[r.Next(0, 4), r.Next(0, 13)];
             if (drawedCards.Contains(playCards[i]))
             {
