@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 
 
 class Program
@@ -32,7 +32,7 @@ class Program
             };
 
         string title = "ARCH DEVIL's POKER";
-        int heigth = 25;
+        int heigth = 23;
         int width = 60;
         int cardWidth = 8;
         int cardHeight = 7;
@@ -51,10 +51,7 @@ class Program
         //welcome screen - OK
         WelcomeScreen(title, heigth, width);
 
-        //HelpScreen - SpaceBar draws, keys 1-5 hold cards, Esc to return ot welcome screen
-
-        //MainScreen - winnings block - coins, bet, current winnings and 5 card backs..
-
+        //MainScreen
         while (coins > 0)
         {
             Array.Clear(holdCards, 0, holdCards.Length);
@@ -69,8 +66,6 @@ class Program
             PrintOnPosition(30, 1, "x" + royalFlushPoints.ToString());
             PrintOnPosition(width - 10, 2, coins.ToString().PadLeft(10));
             PrintOnPosition(width - 5, 1, "Coins");
-
-
 
             Console.WriteLine(" STRAIGHT FLUSH");
             PrintOnPosition(30, 2, "x" + streetFlushPoints.ToString());
@@ -114,9 +109,10 @@ class Program
 
 
 
-            for (int i = 0; i < (cardWidth + 3) * 5; i += 11)
+            for (int i = 0, j = 0; j < 5; i += 11, j++)
             {
                 CardBack(cardHeight, cardWidth, i + 4, 14);
+                Thread.Sleep(130);
             }
 
             Console.BackgroundColor = ConsoleColor.DarkGreen;
@@ -136,9 +132,15 @@ class Program
             //Hold
             holdCards = HoldCard(holdCards);
 
+            for (int i = 0, j = 0; j < 5; i += 11, j++)
+            {
+                if (holdCards[j] == true) continue;
+                CardBack(cardHeight, cardWidth, i + 4, 14);
+            }
+            Thread.Sleep(500);
             //redraw
             playCards = DrawCards(deck, r, drawedCards, holdCards);
-
+            
             //print card faces
             PutFaceCard(cardWidth, cardHeight, holdCards, playCards);
 
@@ -163,6 +165,7 @@ class Program
             else Console.ForegroundColor = ConsoleColor.Red;
 
             CardFace(cardHeight, cardWidth, i + 4, 14, playCards[j].ToString());
+            Thread.Sleep(200);
         }
         Console.BackgroundColor = ConsoleColor.DarkGreen;
         Console.ForegroundColor = ConsoleColor.Yellow;
