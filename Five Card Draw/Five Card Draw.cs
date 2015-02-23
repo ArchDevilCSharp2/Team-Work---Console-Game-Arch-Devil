@@ -37,6 +37,7 @@ class Program
         int cardHeight = 7;
         int winnings = 0;
         int bet = 1;
+        int maxBet = 10;
         int coins = 100;
         bool[] holdCards = new bool[5];
 
@@ -62,7 +63,7 @@ class Program
             Console.WriteLine();
             Console.WriteLine(" ROYAL FLUSH");
             PrintOnPosition(30, 1, "x" + royalFlushPoints.ToString());
-            PrintOnPosition(width - 10, 2, coins.ToString().PadLeft(10));
+            PrintOnPosition(width - 10, 2, coins.ToString().PadLeft(10, ' '));
             PrintOnPosition(width - 5, 1, "Coins");
 
             Console.WriteLine(" STRAIGHT FLUSH");
@@ -76,7 +77,7 @@ class Program
             Console.WriteLine();
             Console.WriteLine(" FULL HOUSE");
             PrintOnPosition(width - 3, 5, "BET");
-            PrintOnPosition(width - 1, 6, bet.ToString());
+            PrintOnPosition(width - 3, 6, bet.ToString().PadLeft(3, ' '));
 
             PrintOnPosition(30, 4, "x" + fullHousePoints.ToString());
             Console.WriteLine();
@@ -117,11 +118,23 @@ class Program
             Console.ForegroundColor = ConsoleColor.Yellow;
 
             // Bet
-            bet = Bet(bet, width, heigth);
+            bet = Bet(bet, width, heigth, maxBet);
+
+            if (coins > bet)
+            {
+                coins -= bet;
+                PrintOnPosition(width - 10, 2, coins.ToString().PadLeft(10, ' '));
+            }
+            else
+            {
+                bet = coins;
+                coins = 0;
+                PrintOnPosition(width - 10, 2, "ALL IN".PadLeft(10, ' '));
+                PrintOnPosition(width - 2, 6, bet.ToString().PadLeft(2, ' '));
+            }
 
             //Draw - 5 cards - OK
             var drawedCards = new List<string>();
-
             var playCards = DrawCards(deck, r, drawedCards, holdCards);
 
             //print card faces
@@ -138,19 +151,18 @@ class Program
             Thread.Sleep(500);
             //redraw
             playCards = DrawCards(deck, r, drawedCards, holdCards);
-            
-            //print card faces
+
+            //print redrawn card faces
             PutFaceCard(cardWidth, cardHeight, holdCards, playCards);
 
-            //Check for Winnings - CheckForWinnings(play[]) - moje i da e [,] - 6 widim
+            //Check for Winnings - CheckForWinnings(playCards[])
 
             //Game Over or Next Deal
 
 
 
-            Console.ReadLine();
-        }
-        
+            Console.ReadKey();
+        }        
     }
 
     private static void PutFaceCard(int cardWidth, int cardHeight, bool[] holdCards, string[] playCards)
@@ -169,7 +181,7 @@ class Program
         Console.ForegroundColor = ConsoleColor.Yellow;
     }
 
-    static int Bet(int bet, int width, int heigth)
+    static int Bet(int bet, int width, int heigth, int maxBet)
     {
         ConsoleKeyInfo keyPressed;
 
@@ -177,16 +189,15 @@ class Program
         {
             keyPressed = Console.ReadKey(true);
 
-            if (keyPressed.Key == ConsoleKey.UpArrow && bet < 10)
+            if (keyPressed.Key == ConsoleKey.UpArrow && bet < maxBet)
             {
                 bet++;
-                if (bet == 10) PrintOnPosition(width - 2, 6, bet.ToString().PadLeft(2));
-                else PrintOnPosition(width - 2, 6, bet.ToString(" " + bet).PadLeft(2));
+                PrintOnPosition(width - 2, 6, bet.ToString().PadLeft(2, ' '));
             }
             if (keyPressed.Key == ConsoleKey.DownArrow && bet > 1)
             {
                 bet--;
-                PrintOnPosition(width - 2, 6, bet.ToString(" " + bet).PadLeft(2));
+                PrintOnPosition(width - 2, 6, bet.ToString().PadLeft(2, ' '));
             }
 
         } while (keyPressed.Key != ConsoleKey.Spacebar);
@@ -268,16 +279,11 @@ class Program
                     PrintOnPosition(50, 21, "    ");
                 }
             }
-
         } while (keyPressed.Key != ConsoleKey.Spacebar);
-
         return cards;
-
     }
 
-
     private static void CardFace(int cardHeight, int cardWidth, int x, int y, string card)
-    
     {
         string cardOk = card;
         if (cardOk[0] == 'T') cardOk = "10" + card[1];
@@ -289,8 +295,7 @@ class Program
                 PrintOnPosition(x + j, y + i, " ");
                 PrintOnPosition(x, y, cardOk);
                 PrintOnPosition(x + 3, y + 3, cardOk);
-                if (cardOk[0] == '1') PrintOnPosition(x + 5, y + 6, cardOk);
-                else PrintOnPosition(x + 6, y + 6, card);
+                PrintOnPosition(x + 5, y + 6, cardOk.PadLeft(3, ' '));
             }
         }
     }
@@ -326,17 +331,15 @@ class Program
     {
         Console.BackgroundColor = ConsoleColor.White;
         Console.ForegroundColor = ConsoleColor.DarkCyan;
-        for (int i = 0; i < width; i++) //cadrBAck start
+        for (int i = 0; i < width; i++)
         {
             for (int j = 0; j < height; j++)
             {
                 PrintOnPosition(x + i, y + j, "*");
             }
-        }   //cardBack end
+        }
     }
-
-
-    //HelpScreen - SpaceBar draws, keys 1-5 hold cards, Esc to return ot welcome screen
+    
     static void HelpMenu()
     {
         Console.Clear();
@@ -368,24 +371,17 @@ class Program
     private static string[] DrawCards(string[,] deck, Random r, List<string> drawedCards, bool[] holdCards)
     {
         var playCards = new string[5];
-
         for (int i = 0; i < 5; i++)
         {
             if (holdCards[i] == true) continue;
- 
-            playCards[i] = deck[r.Next(0, 4), r.Next(0, 13)];
+            playCards[i] = deck[r.Next(0, deck.GetLength(0)), r.Next(0, deck.GetLength(1))];
             if (drawedCards.Contains(playCards[i]))
             {
                 i--;
                 continue;
             }
-            else
-            {
-                drawedCards.Add(playCards[i]);
-            }
-
-        }
+            else drawedCards.Add(playCards[i]);
+         }
         return playCards;
     }
-
 }
