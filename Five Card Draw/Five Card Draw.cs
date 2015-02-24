@@ -135,7 +135,8 @@ class Program
 
             //Draw - 5 cards - OK
             var drawedCards = new List<string>();
-            var playCards = DrawCards(deck, r, drawedCards, holdCards);
+            var playCards = new string[5];
+            DrawCards(deck, r, drawedCards, holdCards, playCards);
 
             //print card faces
             PutFaceCard(cardWidth, cardHeight, holdCards, playCards);
@@ -150,7 +151,7 @@ class Program
             }
             Thread.Sleep(500);
             //redraw
-            playCards = DrawCards(deck, r, drawedCards, holdCards);
+            DrawCards(deck, r, drawedCards, holdCards, playCards);
 
             //print redrawn card faces
             PutFaceCard(cardWidth, cardHeight, holdCards, playCards);
@@ -368,9 +369,8 @@ class Program
         Console.Write(c);
     }
 
-    private static string[] DrawCards(string[,] deck, Random r, List<string> drawedCards, bool[] holdCards)
-    {
-        var playCards = new string[5];
+    private static void DrawCards(string[,] deck, Random r, List<string> drawedCards, bool[] holdCards, string[] playCards)
+    {  
         for (int i = 0; i < 5; i++)
         {
             if (holdCards[i] == true) continue;
@@ -382,6 +382,5 @@ class Program
             }
             else drawedCards.Add(playCards[i]);
          }
-        return playCards;
     }
 }
