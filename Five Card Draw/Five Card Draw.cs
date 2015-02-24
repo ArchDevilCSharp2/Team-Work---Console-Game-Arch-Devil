@@ -103,8 +103,9 @@ class Program
             PrintOnPosition(40, 9, "WINNINGS: " + winnings);
 
             Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine();
+            Console.Write(string.Empty.PadLeft(width, '_'));
+            Console.WriteLine(); //here write guidances what to press at this step - have to get the y of this line - later
+            Console.Write(string.Empty.PadLeft(width, '_'));
 
 
 
