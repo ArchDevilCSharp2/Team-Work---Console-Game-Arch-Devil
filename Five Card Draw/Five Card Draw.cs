@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Media;
 using System.Text;
 using System.Threading;
 
@@ -25,9 +26,9 @@ class Program
         string[,] deck =
             {
                 {"2\u2660","3\u2660","4\u2660","5\u2660","6\u2660","7\u2660","8\u2660","9\u2660","T\u2660","J\u2660","Q\u2660","K\u2660","A\u2660"},
+                {"2\u2663","3\u2663","4\u2663","5\u2663","6\u2663","7\u2663","8\u2663","9\u2663","T\u2663","J\u2663","Q\u2663","K\u2663","A\u2663"},
                 {"2\u2665","3\u2665","4\u2665","5\u2665","6\u2665","7\u2665","8\u2665","9\u2665","T\u2665","J\u2665","Q\u2665","K\u2665","A\u2665"},
-                {"2\u2666","3\u2666","4\u2666","5\u2666","6\u2666","7\u2666","8\u2666","9\u2666","T\u2666","J\u2666","Q\u2666","K\u2666","A\u2666"},
-                {"2\u2663","3\u2663","4\u2663","5\u2663","6\u2663","7\u2663","8\u2663","9\u2663","T\u2663","J\u2663","Q\u2663","K\u2663","A\u2663"}
+                {"2\u2666","3\u2666","4\u2666","5\u2666","6\u2666","7\u2666","8\u2666","9\u2666","T\u2666","J\u2666","Q\u2666","K\u2666","A\u2666"}
             };
 
         string title = "ARCH DEVIL's POKER";
@@ -49,7 +50,14 @@ class Program
         Console.BufferWidth = width;
 
         //welcome screen - OK
-        WelcomeScreen(title, heigth, width);
+        bool isEscaped = false;
+        isEscaped = WelcomeScreen(title, heigth, width);
+
+        // pressed escape for exit
+        if (isEscaped)
+        {
+            return;
+        }
 
         //MainScreen
         while (coins > 0)
@@ -157,14 +165,20 @@ class Program
             //print redrawn card faces
             PutFaceCard(cardWidth, cardHeight, holdCards, playCards);
 
-            //Check for Winnings - CheckForWinnings(playCards[])
+            //Check for Winnings
 
+            CheckForWinnings(deck, playCards);
             //Game Over or Next Deal
 
 
 
             Console.ReadKey();
-        }        
+        }
+    }
+
+    private static void CheckForWinnings(string[,] deck, string[] playCards)
+    {
+
     }
 
     private static void PutFaceCard(int cardWidth, int cardHeight, bool[] holdCards, string[] playCards)
@@ -193,16 +207,30 @@ class Program
 
             if (keyPressed.Key == ConsoleKey.UpArrow && bet < maxBet)
             {
+                // sound for betting up
+                Console.Beep(364, 100);
+                Console.Beep(424, 100);
+
                 bet++;
                 PrintOnPosition(width - 2, 6, bet.ToString().PadLeft(2, ' '));
             }
             if (keyPressed.Key == ConsoleKey.DownArrow && bet > 1)
             {
+                // sound for betting down
+                Console.Beep(424, 100);
+                Console.Beep(364, 100);
+
                 bet--;
                 PrintOnPosition(width - 2, 6, bet.ToString().PadLeft(2, ' '));
             }
 
         } while (keyPressed.Key != ConsoleKey.Spacebar);
+
+        // sound for you bet
+        Console.Beep(3000, 200);
+        Console.Beep(3000, 200);
+
+        PrintOnPosition(2, 11, "YOU BET: " + bet);
 
         return bet;
     }
@@ -220,50 +248,69 @@ class Program
             {
                 if (cards[0] == false)
                 {
+                    Console.Beep(600, 150);
+
                     cards[0] = true;
                     PrintOnPosition(6, 21, "Hold");
                 }
                 else
                 {
+                    Console.Beep(260, 170);
+
                     cards[0] = false;
                     PrintOnPosition(6, 21, "    ");
                 }
             }
             if (keyPressed.Key == ConsoleKey.NumPad2 || keyPressed.Key == ConsoleKey.D2)
             {
+
                 if (cards[1] == false)
                 {
+                    Console.Beep(600, 150);
+
                     cards[1] = true;
                     PrintOnPosition(17, 21, "Hold");
                 }
                 else
                 {
+                    Console.Beep(260, 170);
+
                     cards[1] = false;
                     PrintOnPosition(17, 21, "    ");
                 }
             }
             if (keyPressed.Key == ConsoleKey.NumPad3 || keyPressed.Key == ConsoleKey.D3)
             {
+
                 if (cards[2] == false)
                 {
+                    Console.Beep(600, 150);
+
                     cards[2] = true;
                     PrintOnPosition(28, 21, "Hold");
                 }
                 else
                 {
+                    Console.Beep(260, 170);
+
                     cards[2] = false;
                     PrintOnPosition(28, 21, "    ");
                 }
             }
             if (keyPressed.Key == ConsoleKey.NumPad4 || keyPressed.Key == ConsoleKey.D4)
             {
+
                 if (cards[3] == false)
                 {
+                    Console.Beep(600, 150);
+
                     cards[3] = true;
                     PrintOnPosition(39, 21, "Hold");
                 }
                 else
                 {
+                    Console.Beep(260, 170);
+
                     cards[3] = false;
                     PrintOnPosition(39, 21, "    ");
                 }
@@ -272,16 +319,32 @@ class Program
             {
                 if (cards[4] == false)
                 {
+                    Console.Beep(600, 150);
+
                     cards[4] = true;
                     PrintOnPosition(50, 21, "Hold");
                 }
                 else
                 {
+                    Console.Beep(260, 170);
+
                     cards[4] = false;
                     PrintOnPosition(50, 21, "    ");
                 }
             }
         } while (keyPressed.Key != ConsoleKey.Spacebar);
+
+
+        // delete sign hold form the cards (they are already hold)
+        PrintOnPosition(6, 21, "    ");
+        PrintOnPosition(17, 21, "    ");
+        PrintOnPosition(28, 21, "    ");
+        PrintOnPosition(39, 21, "    ");
+        PrintOnPosition(50, 21, "    ");
+
+        Console.Beep(3000, 200);
+        Console.Beep(3000, 200);
+
         return cards;
     }
 
@@ -302,31 +365,35 @@ class Program
         }
     }
 
-    private static void WelcomeScreen(string title, int heigth, int width)
+    private static bool WelcomeScreen(string title, int heigth, int width)
     {
         Console.ForegroundColor = ConsoleColor.Magenta;
-        PrintOnPosition((width - 18) / 2, heigth / 2 - 4, title);
-        PrintOnPosition((width - 18) / 2, heigth / 2 - 1, "how to play - h");
-        PrintOnPosition((width - 18) / 2, heigth / 2 + 1, "press ENTER to play");
+        PrintOnPosition((width - 28) / 2, heigth / 2 - 4, title);
+        PrintOnPosition((width - 28) / 2, heigth / 2 - 1, "Play - press ENTER");
+        PrintOnPosition((width - 28) / 2, heigth / 2 + 1, "How to play - press H");
+        PrintOnPosition((width - 28) / 2, heigth / 2 + 3, "Exit - press Esc (or Ctrl + C)");
 
-        // Joro
 
         ConsoleKeyInfo startKey;
-        startKey = Console.ReadKey(true);
+        while (true)
+        {
+            startKey = Console.ReadKey(true);
 
-        if (startKey.Key == ConsoleKey.H)
-        {
-            // Console.WriteLine("You pressed H");
-            HelpMenu();
+            if (startKey.Key == ConsoleKey.H)
+            {
+                return HelpMenu();
+            }
+            if (startKey.Key == ConsoleKey.Enter)
+            {
+                break;
+            }
+            if (startKey.Key == ConsoleKey.Escape)
+            {
+                return true;
+            }
         }
-        if (startKey.Key == ConsoleKey.Enter)
-        {
-            Console.WriteLine("You pressed enter");
-        }
-        if (startKey.Key == ConsoleKey.Escape)
-        {
-            Console.WriteLine("You pressed escape");
-        }
+        return false;
+
     }
 
     static void CardBack(int height, int width, int x, int y)
@@ -341,16 +408,17 @@ class Program
             }
         }
     }
-    
-    static void HelpMenu()
+
+    static bool HelpMenu()
     {
         Console.Clear();
         Console.ForegroundColor = ConsoleColor.Yellow;
         //Console.BackgroundColor = ConsoleColor.Yellow;
-        PrintOnPosition(20, 6, "Keys 1 to 5: hold cards");
-        PrintOnPosition(20, 8, "Spacebar: draw cards");
-        PrintOnPosition(20, 10, "You can change any card");
-        PrintOnPosition(20, 12, "Press enter to play");
+        PrintOnPosition(20, 6, "Keys 1 to 5: Hold cards");
+        PrintOnPosition(20, 8, "Spacebar: Draw cards");
+        PrintOnPosition(20, 9, "(You can change any card)");
+        PrintOnPosition(20, 12, "Press ENTER to play");
+        PrintOnPosition(20, 13, "Press ESC to exit");
 
 
         while (true)
@@ -359,11 +427,15 @@ class Program
             key = Console.ReadKey(true);
             if (key.Key == ConsoleKey.Enter)
             {
-                break;
+                return false;
+            }
+            if (key.Key == ConsoleKey.Escape)
+            {
+                return true;
             }
         }
     }
-   
+
     static void PrintOnPosition(int x, int y, string c)
     {
         Console.SetCursorPosition(x, y);
@@ -371,7 +443,7 @@ class Program
     }
 
     private static void DrawCards(string[,] deck, Random r, List<string> drawedCards, bool[] holdCards, string[] playCards)
-    {  
+    {
         for (int i = 0; i < 5; i++)
         {
             if (holdCards[i] == true) continue;
@@ -382,6 +454,6 @@ class Program
                 continue;
             }
             else drawedCards.Add(playCards[i]);
-         }
+        }
     }
 }
