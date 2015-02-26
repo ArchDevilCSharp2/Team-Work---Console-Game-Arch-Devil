@@ -11,7 +11,7 @@ class Program
     static Random r = new Random();
 
     const int royalFlushPoints = 500;
-    const int streetFlushPoints = 100;
+    const int straightFlushPoints = 100;
     const int fourOfAKindPoints = 40;
     const int fullHousePoints = 12;
     const int flushPoint = 7;
@@ -75,13 +75,13 @@ class Program
             PrintOnPosition(width - 5, 1, "Coins");
 
             Console.WriteLine(" STRAIGHT FLUSH");
-            PrintOnPosition(30, 2, "x" + streetFlushPoints.ToString());
+            PrintOnPosition(30, 2, "x" + straightFlushPoints.ToString());
             Console.WriteLine();
 
             Console.WriteLine(" 4 OF A KIND");
             PrintOnPosition(30, 3, "x" + fourOfAKindPoints.ToString());
 
-
+            
             Console.WriteLine();
             Console.WriteLine(" FULL HOUSE");
             PrintOnPosition(width - 3, 5, "BET");
@@ -167,7 +167,10 @@ class Program
 
             //Check for Winnings
 
-            CheckForWinnings(deck, playCards);
+            int wining = CheckForWinnings(deck, playCards);
+            coins += wining * bet;
+           
+            
             //Game Over or Next Deal
 
 
@@ -176,9 +179,202 @@ class Program
         }
     }
 
-    private static void CheckForWinnings(string[,] deck, string[] playCards)
+
+    // Read me: мисля си че за проверката на кво се печели трябва да се направи първо в един голям метод. и тови метод да извиква последователно маклки методи
+    // които да да за проверка на отделните възможни комбинации от карти
+    // сортиранията по скоро OrderBy ще помогне на PlayCards за после като обхожваме матрицата от карти.
+    // също съм разменил два реда от матрицата, за да може и тя да е подредена, за да може като я обхождаме да си е подредена. ебати изречението :)
+    // после тва да го изтрием. в 2:30am не ми е никак лесно
+
+    private static int CheckForWinnings(string[,] deck, string[] playCards)
     {
 
+        string win = string.Empty;
+        bool isMatch = false;
+
+        isMatch = RoyalFlush(deck,playCards);
+        if (isMatch)
+        {
+            win = "ROYAL FLUSH";
+            PrintMatch(1, 1, win);
+            return royalFlushPoints;
+        }
+
+        isMatch = StraightFlush(deck, playCards);
+        if (isMatch)
+        {
+            win = "STRAIGHT FLUSH";
+            PrintMatch(1, 2, win);
+
+            return straightFlushPoints;
+        }
+
+        isMatch = FourOfAKind(deck, playCards);
+        if (isMatch)
+        {
+            win = "4 OF A KIND";
+            PrintMatch(1, 3, win);
+
+            return fourOfAKindPoints;
+        }
+
+        isMatch = FullHouse(deck, playCards);
+        if (isMatch)
+        {
+            win = "FULL HOUSE";
+            PrintMatch(1, 4, win);
+
+            return fullHousePoints;
+        }
+
+        isMatch = Flush(deck, playCards);
+        if (isMatch)
+        {
+            win = "FLUSH";
+            PrintMatch(1, 5, win);
+
+            return flushPoint;
+        }
+
+        isMatch = Straight(deck, playCards);
+        if (isMatch)
+        {
+            win = "STRAIGHT";
+            PrintMatch(1, 6, win);
+
+            return straightPoint;
+        }
+
+        isMatch = ThreeOfAKind(deck, playCards);
+        if (isMatch)
+        {
+            win = "3 OF A KIND";
+            PrintMatch(1, 7, win);
+
+            return threeOfAKindPoint;
+        }
+
+        isMatch = TwoPair(deck, playCards);
+        if (isMatch)
+        {
+            win = "TWO PAIR";
+            PrintMatch(1, 8, win);
+
+            return twoPairPoint;
+        }
+
+        isMatch = HighPair(deck, playCards);
+        if (isMatch)
+        {
+            // this is for the console to print in black-yellow-black-yellow what you win.
+            win = "HIGHT PAIR";
+            PrintMatch(1, 9, win);
+            
+            // return point to colect in the coins
+            return highCardPoint;
+        }
+        return 0;
+    }
+
+    private static bool RoyalFlush(string[,] deck, string[] playCards)
+    {
+        return false;
+    }
+
+    private static bool StraightFlush(string[,] deck, string[] playCards)
+    {
+        Array.Sort(playCards);
+
+        for (int i = 0; i < deck.GetLength(0) - 1; i++)
+        {
+            for (int j = 0; j < deck.GetLength(1) - 5; j++)
+            {
+                if (playCards[0] == deck[i, j] &&
+                    playCards[1] == deck[i, j + 1] &&
+                    playCards[2] == deck[i, j + 2] &&
+                    playCards[3] == deck[i, j + 3] &&
+                    playCards[4] == deck[i, j + 4])
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static bool FourOfAKind(string[,] deck, string[] playCards)
+    {
+        return false;
+    }
+
+    private static bool FullHouse(string[,] deck, string[] playCards)
+    {
+        return false;
+    }
+
+    private static bool Flush(string[,] deck, string[] playCards)
+    {
+        return false;
+    }
+
+    private static bool Straight(string[,] deck, string[] playCards)
+    {
+        return false;
+    }
+
+    private static bool ThreeOfAKind(string[,] deck, string[] playCards)
+    {
+        return false;
+    }
+
+    private static bool TwoPair(string[,] deck, string[] playCards)
+    {
+        return false;
+    }
+
+    private static bool HighPair(string[,] deck, string[] playCards)
+    {
+        Array.Sort(playCards);
+
+        for (int k = 0; k < 4; k++)
+        {
+            for (int i = 0; i < deck.GetLength(1); i++)
+            {
+                if ((playCards[k] == deck[0, i] && playCards[k + 1] == deck[1, i]) ||
+                    (playCards[k] == deck[0, i] && playCards[k + 1] == deck[2, i]) ||
+                    (playCards[k] == deck[0, i] && playCards[k + 1] == deck[3, i]) ||
+                    (playCards[k] == deck[1, i] && playCards[k + 1] == deck[2, i]) ||
+                    (playCards[k] == deck[1, i] && playCards[k + 1] == deck[3, i]) ||
+                    (playCards[k] == deck[2, i] && playCards[k + 1] == deck[3, i]))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+
+    }
+
+    // this is for the console to print in black-yellow-black-yellow what you win.
+    private static void PrintMatch(int p1, int p2, string win)
+    {
+        Console.ForegroundColor = ConsoleColor.Black;
+        PrintOnPosition(p1, p2, win);
+        Thread.Sleep(400);
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        PrintOnPosition(p1, p2, win);
+        Thread.Sleep(400);
+        Console.ForegroundColor = ConsoleColor.Black;
+        PrintOnPosition(p1, p2, win);
+        Thread.Sleep(400);
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        PrintOnPosition(p1, p2, win);
+        Thread.Sleep(400);
+        Console.ForegroundColor = ConsoleColor.Black;
+        PrintOnPosition(p1, p2, win);
+        Thread.Sleep(400);
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        PrintOnPosition(p1, p2, win);
     }
 
     private static void PutFaceCard(int cardWidth, int cardHeight, bool[] holdCards, string[] playCards)
@@ -227,10 +423,10 @@ class Program
         } while (keyPressed.Key != ConsoleKey.Spacebar);
 
         // sound for you bet
-        Console.Beep(3000, 200);
-        Console.Beep(3000, 200);
+        Console.Beep(1800, 200);
+        Console.Beep(1800, 200);
 
-        PrintOnPosition(2, 11, "YOU BET: " + bet);
+        PrintOnPosition(1, 11, "YOU BET: " + bet);
 
         return bet;
     }
@@ -342,8 +538,8 @@ class Program
         PrintOnPosition(39, 21, "    ");
         PrintOnPosition(50, 21, "    ");
 
-        Console.Beep(3000, 200);
-        Console.Beep(3000, 200);
+        Console.Beep(1800, 200);
+        Console.Beep(1800, 200);
 
         return cards;
     }
