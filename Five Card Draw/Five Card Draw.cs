@@ -4,22 +4,14 @@ using System.Linq;
 using System.Media;
 using System.Text;
 using System.Threading;
+using System.IO;
 
 
 class Program
 {
     static Random r = new Random();
 
-    const int royalFlushPoints = 500;
-    const int straightFlushPoints = 100;
-    const int fourOfAKindPoints = 40;
-    const int fullHousePoints = 12;
-    const int flushPoint = 7;
-    const int straightPoint = 5;
-    const int threeOfAKindPoint = 3;
-    const int twoPairPoint = 2;
-    const int highCardPoint = 1;
-
+    static uint[] countWinnigs = new uint[9];
 
     static void Main()
     {
@@ -31,15 +23,28 @@ class Program
                 {"2\u2666","3\u2666","4\u2666","5\u2666","6\u2666","7\u2666","8\u2666","9\u2666","T\u2666","J\u2666","Q\u2666","K\u2666","A\u2666"}
             };
 
+        Dictionary<string, uint> points = new Dictionary<string, uint>();
+        points.Add("ROYAL FLUSH", 500);
+        points.Add("STRAIGHT FLUSH", 100);
+        points.Add("4 OF A KIND", 40);
+        points.Add("FULL HOUSE", 12);
+        points.Add("FLUSH", 7);
+        points.Add("STRAIGHT", 5);
+        points.Add("3 OF A KIND", 3);
+        points.Add("TWO PAIR", 2);
+        points.Add("ONE PAIR", 1);
+
+        
+
         string title = "ARCH DEVIL's POKER";
         int heigth = 23;
         int width = 60;
         int cardWidth = 8;
         int cardHeight = 7;
-        int winnings = 0;
-        int bet = 1;
-        int maxBet = 10;
-        int coins = 100;
+        uint winnings = 0;
+        uint bet = 1;
+        uint maxBet = 10;
+        uint coins = 100;
         bool[] holdCards = new bool[5];
 
         Console.CursorVisible = false;
@@ -69,53 +74,27 @@ class Program
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.BackgroundColor = ConsoleColor.DarkGreen;
             Console.WriteLine();
-            Console.WriteLine(" ROYAL FLUSH");
-            PrintOnPosition(30, 1, "x" + royalFlushPoints.ToString());
+
+
+            for (int i = 1; i <= points.Count; i++)
+            {
+                var item =points.ElementAt(i-1);
+                var itemKey = item.Key;
+                var itemValue = item.Value;
+                PrintOnPosition(1, i, itemKey);
+                PrintOnPosition(30, i, string.Concat("x", itemValue));
+            }
+
             PrintOnPosition(width - 10, 2, coins.ToString().PadLeft(10, ' '));
             PrintOnPosition(width - 5, 1, "Coins");
 
-            Console.WriteLine(" STRAIGHT FLUSH");
-            PrintOnPosition(30, 2, "x" + straightFlushPoints.ToString());
-            Console.WriteLine();
-
-            Console.WriteLine(" 4 OF A KIND");
-            PrintOnPosition(30, 3, "x" + fourOfAKindPoints.ToString());
-
-            
-            Console.WriteLine();
-            Console.WriteLine(" FULL HOUSE");
             PrintOnPosition(width - 3, 5, "BET");
             PrintOnPosition(width - 3, 6, bet.ToString().PadLeft(3, ' '));
 
-            PrintOnPosition(30, 4, "x" + fullHousePoints.ToString());
-            Console.WriteLine();
-
-            Console.WriteLine(" FLUSH");
-            PrintOnPosition(30, 5, "x" + flushPoint.ToString());
-            Console.WriteLine();
-
-            Console.WriteLine(" STRAIGHT");
-            PrintOnPosition(30, 6, "x" + straightPoint.ToString());
-            Console.WriteLine();
-
-            Console.WriteLine(" 3 OF A KIND");
-            PrintOnPosition(30, 7, "x" + threeOfAKindPoint.ToString());
-            Console.WriteLine();
-
-            Console.WriteLine(" TWO PAIR");
-            PrintOnPosition(30, 8, "x" + twoPairPoint.ToString());
-            Console.WriteLine();
-
-            Console.WriteLine(" HIGH PAIR");
-            PrintOnPosition(30, 9, "x" + highCardPoint.ToString());
             PrintOnPosition(40, 9, "WINNINGS: " + winnings);
 
-            Console.WriteLine();
-            Console.Write(string.Empty.PadLeft(width, '_'));
-            Console.WriteLine(); //here write guidances what to press at this step - have to get the y of this line - later
-            Console.Write(string.Empty.PadLeft(width, '_'));
-
-
+            PrintOnPosition(0, 10, new string('_', width));
+            PrintOnPosition(0, 12, new string('_', width));
 
             for (int i = 0, j = 0; j < 5; i += 11, j++)
             {
@@ -129,17 +108,21 @@ class Program
             // Bet
             bet = Bet(bet, width, heigth, maxBet);
 
-            if (coins > bet)
+            checked
             {
-                coins -= bet;
-                PrintOnPosition(width - 10, 2, coins.ToString().PadLeft(10, ' '));
-            }
-            else
-            {
-                bet = coins;
-                coins = 0;
-                PrintOnPosition(width - 10, 2, "ALL IN".PadLeft(10, ' '));
-                PrintOnPosition(width - 2, 6, bet.ToString().PadLeft(2, ' '));
+                try
+                {
+                    coins -= bet;
+                    PrintOnPosition(width - 10, 2, coins.ToString().PadLeft(10, ' '));
+                }
+                catch (OverflowException)
+                {
+                    bet = coins;
+                    coins = 0;
+                    PrintOnPosition(width - 10, 2, "ALL IN".PadLeft(10, ' '));
+                    PrintOnPosition(width - 2, 6, bet.ToString().PadLeft(2, ' '));
+                    PrintOnPosition(1, 11, "YOU BET: " + bet);
+                }
             }
 
             //Draw - 5 cards - OK
@@ -167,111 +150,154 @@ class Program
 
             //Check for Winnings
 
-            int wining = CheckForWinnings(deck, playCards);
-            coins += wining * bet;
-           
-            
+            uint winningCoins = CheckForWinnings(deck, playCards, points);
+            coins += winningCoins * bet;
+            if (winningCoins != 0)
+            {
+                winnings++;
+            }
+
             //Game Over or Next Deal
 
+            WriteInFile(countWinnigs, winnings);
 
+            ConsoleKeyInfo button;
 
-            Console.ReadKey();
+            button = Console.ReadKey(true);
+            if (button.Key == ConsoleKey.Escape)
+            {
+                break;
+            }
+
+        }
+
+        Console.Clear();
+
+        PrintOnPosition((width - 28) / 2, heigth / 2 - 3, "GAME OVER");
+        using (StreamReader reader = new StreamReader("winnings.txt"))
+        {
+            string line = reader.ReadLine();
+            PrintOnPosition((width - 28) / 2, heigth / 2 - 1, line);
+
+            int couterLine = 1;
+            foreach (var key in points.Keys)
+            {
+                line = reader.ReadLine();
+                PrintOnPosition((width - 28) / 2, heigth / 2 + couterLine, string.Concat(key, ": ",line));
+                couterLine++;
+            }
+        }
+
+        
+    }
+
+    private static void WriteInFile(uint[] countWinnins, uint winnings)
+    {
+        using (StreamWriter win = new StreamWriter("winnings.txt"))
+        {
+            win.WriteLine("Winnings: {0}", winnings);
+            for (int i = 0; i < 9; i++)
+            {
+                win.WriteLine(countWinnigs[i]);
+            }
         }
     }
 
-
-    // Read me: мисля си че за проверката на кво се печели трябва да се направи първо в един голям метод. и тови метод да извиква последователно маклки методи
-    // които да да за проверка на отделните възможни комбинации от карти
-    // сортиранията по скоро OrderBy ще помогне на PlayCards за после като обхожваме матрицата от карти.
-    // също съм разменил два реда от матрицата, за да може и тя да е подредена, за да може като я обхождаме да си е подредена. ебати изречението :)
-    // после тва да го изтрием. в 2:30am не ми е никак лесно
-
-    private static int CheckForWinnings(string[,] deck, string[] playCards)
+    private static uint CheckForWinnings(string[,] deck, string[] playCards, Dictionary<string, uint> points)
     {
 
         string win = string.Empty;
         bool isMatch = false;
 
-        isMatch = RoyalFlush(deck,playCards);
+        isMatch = RoyalFlush(deck, playCards);
         if (isMatch)
         {
+            countWinnigs[0]++;
             win = "ROYAL FLUSH";
             PrintMatch(1, 1, win);
-            return royalFlushPoints;
+            return points[win];
         }
 
         isMatch = StraightFlush(deck, playCards);
         if (isMatch)
         {
+            countWinnigs[1]++;
             win = "STRAIGHT FLUSH";
             PrintMatch(1, 2, win);
 
-            return straightFlushPoints;
+            return points[win];
         }
 
         isMatch = FourOfAKind(deck, playCards);
         if (isMatch)
         {
+            countWinnigs[2]++;
             win = "4 OF A KIND";
             PrintMatch(1, 3, win);
 
-            return fourOfAKindPoints;
+            return points[win];
         }
 
         isMatch = FullHouse(deck, playCards);
         if (isMatch)
         {
+            countWinnigs[3]++;
             win = "FULL HOUSE";
             PrintMatch(1, 4, win);
 
-            return fullHousePoints;
+            return points[win];
         }
 
         isMatch = Flush(deck, playCards);
         if (isMatch)
         {
+            countWinnigs[4]++;
             win = "FLUSH";
             PrintMatch(1, 5, win);
 
-            return flushPoint;
+            return points[win];
         }
 
         isMatch = Straight(deck, playCards);
         if (isMatch)
         {
+            countWinnigs[5]++;
             win = "STRAIGHT";
             PrintMatch(1, 6, win);
 
-            return straightPoint;
+            return points[win];
         }
 
         isMatch = ThreeOfAKind(deck, playCards);
         if (isMatch)
         {
+            countWinnigs[6]++;
             win = "3 OF A KIND";
             PrintMatch(1, 7, win);
 
-            return threeOfAKindPoint;
+            return points[win];
         }
 
         isMatch = TwoPair(deck, playCards);
         if (isMatch)
         {
+            countWinnigs[7]++;
             win = "TWO PAIR";
             PrintMatch(1, 8, win);
 
-            return twoPairPoint;
+            return points[win];
         }
 
         isMatch = HighPair(deck, playCards);
         if (isMatch)
         {
+            countWinnigs[8]++;
             // this is for the console to print in black-yellow-black-yellow what you win.
-            win = "HIGHT PAIR";
+            win = "ONE PAIR";
             PrintMatch(1, 9, win);
-            
+
             // return point to colect in the coins
-            return highCardPoint;
+            return points[win];
         }
         return 0;
     }
@@ -360,19 +386,19 @@ class Program
     {
         Console.ForegroundColor = ConsoleColor.Black;
         PrintOnPosition(p1, p2, win);
-        Thread.Sleep(400);
+        Thread.Sleep(300);
         Console.ForegroundColor = ConsoleColor.Yellow;
         PrintOnPosition(p1, p2, win);
-        Thread.Sleep(400);
+        Thread.Sleep(300);
         Console.ForegroundColor = ConsoleColor.Black;
         PrintOnPosition(p1, p2, win);
-        Thread.Sleep(400);
+        Thread.Sleep(300);
         Console.ForegroundColor = ConsoleColor.Yellow;
         PrintOnPosition(p1, p2, win);
-        Thread.Sleep(400);
+        Thread.Sleep(300);
         Console.ForegroundColor = ConsoleColor.Black;
         PrintOnPosition(p1, p2, win);
-        Thread.Sleep(400);
+        Thread.Sleep(300);
         Console.ForegroundColor = ConsoleColor.Yellow;
         PrintOnPosition(p1, p2, win);
     }
@@ -393,7 +419,7 @@ class Program
         Console.ForegroundColor = ConsoleColor.Yellow;
     }
 
-    static int Bet(int bet, int width, int heigth, int maxBet)
+    static uint Bet(uint bet, int width, int heigth, uint maxBet)
     {
         ConsoleKeyInfo keyPressed;
 
@@ -408,7 +434,6 @@ class Program
                 Console.Beep(424, 100);
 
                 bet++;
-                PrintOnPosition(width - 2, 6, bet.ToString().PadLeft(2, ' '));
             }
             if (keyPressed.Key == ConsoleKey.DownArrow && bet > 1)
             {
@@ -417,14 +442,15 @@ class Program
                 Console.Beep(364, 100);
 
                 bet--;
-                PrintOnPosition(width - 2, 6, bet.ToString().PadLeft(2, ' '));
             }
+
+            PrintOnPosition(width - 2, 6, bet.ToString().PadLeft(2, ' '));
 
         } while (keyPressed.Key != ConsoleKey.Spacebar);
 
         // sound for you bet
-        Console.Beep(1800, 200);
-        Console.Beep(1800, 200);
+        Console.Beep(700, 200);
+        Console.Beep(700, 200);
 
         PrintOnPosition(1, 11, "YOU BET: " + bet);
 
@@ -530,16 +556,8 @@ class Program
             }
         } while (keyPressed.Key != ConsoleKey.Spacebar);
 
-
-        // delete sign hold form the cards (they are already hold)
-        PrintOnPosition(6, 21, "    ");
-        PrintOnPosition(17, 21, "    ");
-        PrintOnPosition(28, 21, "    ");
-        PrintOnPosition(39, 21, "    ");
-        PrintOnPosition(50, 21, "    ");
-
-        Console.Beep(1800, 200);
-        Console.Beep(1800, 200);
+        Console.Beep(700, 200);
+        Console.Beep(700, 200);
 
         return cards;
     }
@@ -635,7 +653,7 @@ class Program
     static void PrintOnPosition(int x, int y, string c)
     {
         Console.SetCursorPosition(x, y);
-        Console.Write(c);
+        Console.WriteLine(c);
     }
 
     private static void DrawCards(string[,] deck, Random r, List<string> drawedCards, bool[] holdCards, string[] playCards)
