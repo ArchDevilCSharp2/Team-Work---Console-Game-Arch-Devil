@@ -23,18 +23,20 @@ class Program
                 {"2\u2666","3\u2666","4\u2666","5\u2666","6\u2666","7\u2666","8\u2666","9\u2666","T\u2666","J\u2666","Q\u2666","K\u2666","A\u2666"}
             };
 
-        Dictionary<string, uint> points = new Dictionary<string, uint>();
-        points.Add("ROYAL FLUSH", 500);
-        points.Add("STRAIGHT FLUSH", 100);
-        points.Add("4 OF A KIND", 40);
-        points.Add("FULL HOUSE", 12);
-        points.Add("FLUSH", 7);
-        points.Add("STRAIGHT", 5);
-        points.Add("3 OF A KIND", 3);
-        points.Add("TWO PAIR", 2);
-        points.Add("ONE PAIR", 1);
+        Dictionary<string, uint> points = new Dictionary<string, uint>()
+        {
+            {"ROYAL FLUSH", 500},
+            {"STRAIGHT FLUSH", 100},
+            {"4 OF A KIND", 40},
+            {"FULL HOUSE", 12},
+            {"FLUSH", 7},
+            {"STRAIGHT", 5},
+            {"3 OF A KIND", 3},
+            {"TWO PAIR", 2},
+            {"ONE PAIR", 1}
+        };
 
-        
+
 
         string title = "ARCH DEVIL's POKER";
         int heigth = 23;
@@ -45,7 +47,6 @@ class Program
         uint bet = 1;
         uint maxBet = 10;
         uint coins = 100;
-        bool[] holdCards = new bool[5];
 
         Console.CursorVisible = false;
         Console.Title = title;
@@ -67,7 +68,8 @@ class Program
         //MainScreen
         while (coins > 0)
         {
-            Array.Clear(holdCards, 0, holdCards.Length);
+            bool[] holdCards = new bool[5];
+            bool[] winDisplay = new bool[points.Count];
             Console.BackgroundColor = ConsoleColor.DarkGreen;
             Console.Clear();
 
@@ -78,7 +80,7 @@ class Program
 
             for (int i = 1; i <= points.Count; i++)
             {
-                var item =points.ElementAt(i-1);
+                var item = points.ElementAt(i - 1);
                 var itemKey = item.Key;
                 var itemValue = item.Value;
                 PrintOnPosition(1, i, itemKey);
@@ -150,8 +152,8 @@ class Program
 
             //Check for Winnings
 
-            uint winningCoins = CheckForWinnings(deck, playCards, points);
-            coins += winningCoins * bet;
+            int winningCoins = CheckForWinnings(playCards, winDisplay, points);
+            coins += (uint)winningCoins * bet;
             if (winningCoins != 0)
             {
                 winnings++;
@@ -183,12 +185,12 @@ class Program
             foreach (var key in points.Keys)
             {
                 line = reader.ReadLine();
-                PrintOnPosition((width - 28) / 2, heigth / 2 + couterLine, string.Concat(key, ": ",line));
+                PrintOnPosition((width - 28) / 2, heigth / 2 + couterLine, string.Concat(key, ": ", line));
                 couterLine++;
             }
         }
 
-        
+
     }
 
     private static void WriteInFile(uint[] countWinnins, uint winnings)
@@ -203,182 +205,107 @@ class Program
         }
     }
 
-    private static uint CheckForWinnings(string[,] deck, string[] playCards, Dictionary<string, uint> points)
+    private static int CheckForWinnings(string[] playCards, bool[] winDisplay, Dictionary<string, uint> points)
     {
+        int winning = 0;
+        var cardNumber = new int[playCards.Length];
 
-        string win = string.Empty;
-        bool isMatch = false;
-
-        isMatch = RoyalFlush(deck, playCards);
-        if (isMatch)
+        if (playCards[0][1] == playCards[1][1] && playCards[0][1] == playCards[2][1] && playCards[0][1] == playCards[3][1] && playCards[0][1] == playCards[4][1])
         {
-            countWinnigs[0]++;
-            win = "ROYAL FLUSH";
-            PrintMatch(1, 1, win);
-            return points[win];
-        }
+            ReshapeCards(playCards, cardNumber);
 
-        isMatch = StraightFlush(deck, playCards);
-        if (isMatch)
-        {
-            countWinnigs[1]++;
-            win = "STRAIGHT FLUSH";
-            PrintMatch(1, 2, win);
-
-            return points[win];
-        }
-
-        isMatch = FourOfAKind(deck, playCards);
-        if (isMatch)
-        {
-            countWinnigs[2]++;
-            win = "4 OF A KIND";
-            PrintMatch(1, 3, win);
-
-            return points[win];
-        }
-
-        isMatch = FullHouse(deck, playCards);
-        if (isMatch)
-        {
-            countWinnigs[3]++;
-            win = "FULL HOUSE";
-            PrintMatch(1, 4, win);
-
-            return points[win];
-        }
-
-        isMatch = Flush(deck, playCards);
-        if (isMatch)
-        {
-            countWinnigs[4]++;
-            win = "FLUSH";
-            PrintMatch(1, 5, win);
-
-            return points[win];
-        }
-
-        isMatch = Straight(deck, playCards);
-        if (isMatch)
-        {
-            countWinnigs[5]++;
-            win = "STRAIGHT";
-            PrintMatch(1, 6, win);
-
-            return points[win];
-        }
-
-        isMatch = ThreeOfAKind(deck, playCards);
-        if (isMatch)
-        {
-            countWinnigs[6]++;
-            win = "3 OF A KIND";
-            PrintMatch(1, 7, win);
-
-            return points[win];
-        }
-
-        isMatch = TwoPair(deck, playCards);
-        if (isMatch)
-        {
-            countWinnigs[7]++;
-            win = "TWO PAIR";
-            PrintMatch(1, 8, win);
-
-            return points[win];
-        }
-
-        isMatch = HighPair(deck, playCards);
-        if (isMatch)
-        {
-            countWinnigs[8]++;
-            // this is for the console to print in black-yellow-black-yellow what you win.
-            win = "ONE PAIR";
-            PrintMatch(1, 9, win);
-
-            // return point to colect in the coins
-            return points[win];
-        }
-        return 0;
-    }
-
-    private static bool RoyalFlush(string[,] deck, string[] playCards)
-    {
-        return false;
-    }
-
-    private static bool StraightFlush(string[,] deck, string[] playCards)
-    {
-        Array.Sort(playCards);
-
-        for (int i = 0; i < deck.GetLength(0) - 1; i++)
-        {
-            for (int j = 0; j < deck.GetLength(1) - 5; j++)
+            if (cardNumber[0] == cardNumber[1] + 1 && cardNumber[0] == cardNumber[2] + 2 && cardNumber[0] == cardNumber[3] + 3 && cardNumber[0] == cardNumber[4] + 4)
             {
-                if (playCards[0] == deck[i, j] &&
-                    playCards[1] == deck[i, j + 1] &&
-                    playCards[2] == deck[i, j + 2] &&
-                    playCards[3] == deck[i, j + 3] &&
-                    playCards[4] == deck[i, j + 4])
+                if (cardNumber[0] == 10)
                 {
-                    return true;
+                    //Royal flush
+                    winDisplay[0] = true;
+                    winning = 500;
+                    return winning;
+                }
+                else
+                {
+                    //straight flush
+                    winDisplay[1] = true;
+                    winning = 100;
+                    return winning;
                 }
             }
-        }
-        return false;
-    }
-
-    private static bool FourOfAKind(string[,] deck, string[] playCards)
-    {
-        return false;
-    }
-
-    private static bool FullHouse(string[,] deck, string[] playCards)
-    {
-        return false;
-    }
-
-    private static bool Flush(string[,] deck, string[] playCards)
-    {
-        return false;
-    }
-
-    private static bool Straight(string[,] deck, string[] playCards)
-    {
-        return false;
-    }
-
-    private static bool ThreeOfAKind(string[,] deck, string[] playCards)
-    {
-        return false;
-    }
-
-    private static bool TwoPair(string[,] deck, string[] playCards)
-    {
-        return false;
-    }
-
-    private static bool HighPair(string[,] deck, string[] playCards)
-    {
-        Array.Sort(playCards);
-
-        for (int k = 0; k < 4; k++)
-        {
-            for (int i = 0; i < deck.GetLength(1); i++)
+            if (cardNumber[0] == 14 && cardNumber[1] == 2 && cardNumber[2] == 3 && cardNumber[3] == 4 && cardNumber[4] == 5)
             {
-                if ((playCards[k] == deck[0, i] && playCards[k + 1] == deck[1, i]) ||
-                    (playCards[k] == deck[0, i] && playCards[k + 1] == deck[2, i]) ||
-                    (playCards[k] == deck[0, i] && playCards[k + 1] == deck[3, i]) ||
-                    (playCards[k] == deck[1, i] && playCards[k + 1] == deck[2, i]) ||
-                    (playCards[k] == deck[1, i] && playCards[k + 1] == deck[3, i]) ||
-                    (playCards[k] == deck[2, i] && playCards[k + 1] == deck[3, i]))
-                {
-                    return true;
-                }
+                //straight flush
+                winDisplay[1] = true;
+                winning = 100;
+                return winning;
+            }
+            else
+            {
+                //flush
+                winDisplay[4] = true;
+                winning = 7;
+                return winning;
             }
         }
-        return false;
 
+        ReshapeCards(playCards, cardNumber);
+
+        if ((cardNumber[0] == cardNumber[1] && cardNumber[0] == cardNumber[2] && cardNumber[0] == cardNumber[3]) || (cardNumber[1] == cardNumber[2] && cardNumber[1] == cardNumber[3] && cardNumber[1] == cardNumber[4]))
+        {
+            //4 of a Kind
+            winDisplay[2] = true;
+            winning = 40;
+            return winning;
+        }
+        if ((cardNumber[0] == cardNumber[1] && cardNumber[0] == cardNumber[2] && cardNumber[3] == cardNumber[4]) || (cardNumber[0] == cardNumber[1] && cardNumber[2] == cardNumber[3] && cardNumber[2] == cardNumber[4]))
+        {
+            //Full House
+            winDisplay[3] = true;
+            winning = 10;
+            return winning;
+        }
+        if ((cardNumber[0] == cardNumber[1] + 1 && cardNumber[0] == cardNumber[2] + 2 && cardNumber[0] == cardNumber[3] + 3 && cardNumber[0] == cardNumber[4] + 4) || (cardNumber[0] == 14 && cardNumber[1] == 2 && cardNumber[2] == 3 && cardNumber[3] == 4 && cardNumber[4] == 5))
+        {
+            // straight
+            winDisplay[5] = true;
+            winning = 5;
+            return winning;
+        }
+
+        if ((cardNumber[0] == cardNumber[1] && cardNumber[0] == cardNumber[2]) || (cardNumber[1] == cardNumber[2] && cardNumber[1] == cardNumber[3]) || (cardNumber[2] == cardNumber[3] && cardNumber[2] == cardNumber[4]))
+        {
+            // 3 of a kind
+            winDisplay[6] = true;
+            winning = 3;
+            return winning;
+        }
+        if ((cardNumber[0] == cardNumber[1] && (cardNumber[2] == cardNumber[3] || cardNumber[3] == cardNumber[4])) || (cardNumber[1] == cardNumber[2] && cardNumber[3] == cardNumber[4]))
+        {
+            // two pair
+            winDisplay[7] = true;
+            winning = 2;
+            return winning;
+        }
+        if ((cardNumber[0] == cardNumber[1] && cardNumber[0] > 10) || (cardNumber[1] == cardNumber[2] && cardNumber[1] > 10) || (cardNumber[2] == cardNumber[3] && cardNumber[2] > 10) || (cardNumber[3] == cardNumber[4] && cardNumber[3] > 10))
+        {
+            // high pair
+            winDisplay[8] = true;
+            winning = 1;
+            return winning;
+        }
+        return winning;
+    }
+    private static void ReshapeCards(string[] playCards, int[] cardNumber)
+    {
+        for (int i = 0; i < playCards.Length; i++)
+        {
+            if (playCards[i][0] == 'T') cardNumber[i] = 10;
+            else if (playCards[i][0] == 'J') cardNumber[i] = 11;
+            else if (playCards[i][0] == 'Q') cardNumber[i] = 12;
+            else if (playCards[i][0] == 'K') cardNumber[i] = 13;
+            else if (playCards[i][0] == 'A') cardNumber[i] = 14;
+            else cardNumber[i] = int.Parse(playCards[i].Remove(playCards[i].Length - 1));
+        }
+        Array.Sort(cardNumber);
     }
 
     // this is for the console to print in black-yellow-black-yellow what you win.
