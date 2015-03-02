@@ -513,7 +513,7 @@ class Program
 
         Console.Clear();
         Console.CursorVisible = false;
-        WriteColorString("---------------------Welcome---------------------", 5, 1, ConsoleColor.Black, ConsoleColor.Yellow);
+        WriteColorString("--------------------5 Card Draw--------------------", 5, 1, ConsoleColor.Black, ConsoleColor.Yellow);
 
         string[] menuchoice = { "Play", "How to play", "Exit" };
         WriteColorString("use up and down arrow keys and press enter to choose", 3, 21, ConsoleColor.Black, ConsoleColor.White);
