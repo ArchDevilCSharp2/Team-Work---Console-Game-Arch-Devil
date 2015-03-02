@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading;
 using System.IO;
 
-
 class Program
 {
     static Random r = new Random();
@@ -168,7 +167,7 @@ class Program
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.BackgroundColor = ConsoleColor.DarkGreen;
 
-            PrintOnPosition(40, 9, "WON COINS: " + winningCoins * bet);
+            PrintOnPosition(40, 9, "COINS WON: " + winningCoins * bet);
 
             deals++;
 
@@ -559,7 +558,6 @@ class Program
     {
         Console.Clear();
         Console.ForegroundColor = ConsoleColor.Yellow;
-        //Console.BackgroundColor = ConsoleColor.Yellow;
         PrintOnPosition(20, 6, "Keys 1 to 5: Hold cards");
         PrintOnPosition(20, 8, "Spacebar: Draw cards");
         PrintOnPosition(20, 9, "(You can change any card)");
