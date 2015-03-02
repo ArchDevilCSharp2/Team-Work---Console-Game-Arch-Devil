@@ -113,13 +113,16 @@ class Program
                     coins -= bet;
                     PrintOnPosition(width - 10, 2, coins.ToString().PadLeft(10, ' '));
                 }
-                catch (Exception)
+                catch (OverflowException)
                 {
                     bet = coins;
                     coins = 0;
                     PrintOnPosition(width - 10, 2, "ALL IN".PadLeft(10, ' '));
-                    PrintOnPosition(width - 2, 6, bet.ToString().PadLeft(2, ' '));
-                    PrintOnPosition(20, 11, "YOUR BET: " + bet);
+                    PrintOnPosition(width - 2, 6, bet.ToString().PadLeft(2, ' ')); 
+                }
+                finally
+                {
+                    PrintOnPosition(40, 8, "YOUR BET: " + bet);
                 }
             }
 
@@ -165,7 +168,7 @@ class Program
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.BackgroundColor = ConsoleColor.DarkGreen;
 
-            PrintOnPosition(40, 9, "WINNINGS: " + winningCoins * bet);
+            PrintOnPosition(40, 9, "WON COINS: " + winningCoins * bet);
 
             deals++;
 
@@ -186,10 +189,13 @@ class Program
 
         Console.Clear();
 
-        PrintOnPosition((width - 28) / 2, heigth / 2 - 3, "GAME OVER");
+        PrintOnPosition((width - 28) / 2, heigth / 2 - 5, "GAME OVER");
         using (StreamReader reader = new StreamReader("winnings.txt"))
         {
             string line = reader.ReadLine();
+            PrintOnPosition((width - 28) / 2, heigth / 2 - 3, line);
+
+            line = reader.ReadLine();
             PrintOnPosition((width - 28) / 2, heigth / 2 - 1, line);
 
             int couterLine = 1;
@@ -217,8 +223,8 @@ class Program
     {
         using (StreamWriter win = new StreamWriter("winnings.txt"))
         {
-            //win.WriteLine("Total deals made {0}", deals);
-            win.WriteLine("Winnings: {0}", winnings);
+            win.WriteLine("Total deals made: {0}", deals);
+            win.WriteLine("Total winnings: {0}", winnings);
             for (int i = 0; i < 9; i++)
             {
                 win.WriteLine(countWinnigs[i]);
@@ -328,28 +334,6 @@ class Program
         Array.Sort(cardNumber);
     }
 
-    //// this is for the console to print in black-yellow-black-yellow what you win.
-    //private static void PrintMatch(int p1, int p2, string win)
-    //{
-    //    Console.ForegroundColor = ConsoleColor.Black;
-    //    PrintOnPosition(p1, p2, win);
-    //    Thread.Sleep(300);
-    //    Console.ForegroundColor = ConsoleColor.Yellow;
-    //    PrintOnPosition(p1, p2, win);
-    //    Thread.Sleep(300);
-    //    Console.ForegroundColor = ConsoleColor.Black;
-    //    PrintOnPosition(p1, p2, win);
-    //    Thread.Sleep(300);
-    //    Console.ForegroundColor = ConsoleColor.Yellow;
-    //    PrintOnPosition(p1, p2, win);
-    //    Thread.Sleep(300);
-    //    Console.ForegroundColor = ConsoleColor.Black;
-    //    PrintOnPosition(p1, p2, win);
-    //    Thread.Sleep(300);
-    //    Console.ForegroundColor = ConsoleColor.Yellow;
-    //    PrintOnPosition(p1, p2, win);
-    //}
-
     private static void PutFaceCard(int cardWidth, int cardHeight, bool[] holdCards, string[] playCards)
     {
         for (int i = 0, j = 0; j < 5; i += 11, j++)
@@ -381,17 +365,20 @@ class Program
                 Console.Beep(424, 100);
 
                 bet++;
+                PrintOnPosition(width - 2, 6, bet.ToString().PadLeft(2, ' '));
+
             }
-            if (keyPressed.Key == ConsoleKey.DownArrow && bet > 1)
+            if (keyPressed.Key == ConsoleKey.DownArrow)
             {
                 // sound for betting down
                 Console.Beep(424, 100);
                 Console.Beep(364, 100);
 
                 bet--;
+                PrintOnPosition(width - 2, 6, bet.ToString().PadLeft(2, ' '));
+
             }
 
-            PrintOnPosition(width - 2, 6, bet.ToString().PadLeft(2, ' '));
 
         } while (keyPressed.Key != ConsoleKey.Spacebar);
 
