@@ -361,7 +361,7 @@ class Program
                 PrintOnPosition(width - 2, 6, bet.ToString().PadLeft(2, ' '));
 
             }
-            if (keyPressed.Key == ConsoleKey.DownArrow)
+            if (keyPressed.Key == ConsoleKey.DownArrow && bet > 1)
             {
                 // sound for betting down
                 Console.Beep(424, 100);
@@ -676,9 +676,8 @@ class Program
         WriteColorString("-------------------Help Menu-------------------", 7, 1, ConsoleColor.Black, ConsoleColor.Cyan);
         PrintOnPosition(20, 6, "Keys 1 to 5: Hold cards");
         PrintOnPosition(20, 8, "Spacebar: Draw cards");
-        PrintOnPosition(20, 9, "(You can change any card)");
+        PrintOnPosition(20, 9, "(You can hold any card)");
         PrintOnPosition(20, 12, "Press ENTER to play");
-        PrintOnPosition(20, 13, "Press ESC to exit");
 
 
         while (true)
@@ -688,10 +687,6 @@ class Program
             if (key.Key == ConsoleKey.Enter)
             {
                 return false;
-            }
-            if (key.Key == ConsoleKey.Escape)
-            {
-                return true;
             }
         }
     }
