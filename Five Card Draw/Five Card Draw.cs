@@ -95,7 +95,7 @@ class Program
             Console.BackgroundColor = ConsoleColor.DarkGreen;
             Console.ForegroundColor = ConsoleColor.Yellow;
 
-            PrintOnPosition(14, 11, "Place your bet using up/down arrows");
+            PrintOnPosition(15, 11, "Place your bet - up/down arrows");
             // Bet
             bet = Bet(bet, width, heigth, maxBet);
 
@@ -127,7 +127,7 @@ class Program
             //print card faces
             PutFaceCard(cardWidth, cardHeight, holdCards, playCards);
 
-            PrintOnPosition(14, 11, "Press 1-5 to hold/unhold cards           ");
+            PrintOnPosition(15, 11, "Press 1-5 to hold/unhold cards  ");
             //Hold
             holdCards = HoldCard(holdCards);
 
@@ -165,7 +165,7 @@ class Program
 
             deals++;
 
-            PrintOnPosition(14, 11, "Press spaceBar to continue - esc to exit".PadLeft(7, ' '));
+            PrintOnPosition(15, 11, "spaceBar to continue - esc to exit    ");
             //Game Over or Next Deal
 
             WriteInFile(countWinnigs, winnings, deals);
@@ -250,7 +250,7 @@ class Program
                     return points["STRAIGHT FLUSH"];
                 }
             }
-            if (cardNumber[0] == 14 && cardNumber[1] == 2 && cardNumber[2] == 3 && cardNumber[3] == 4 && cardNumber[4] == 5)
+            if (cardNumber[4] == 14 && cardNumber[0] == 2 && cardNumber[1] == 3 && cardNumber[2] == 4 && cardNumber[3] == 5)
             {
                 //straight flush
                 countWinnigs[1]++;
@@ -282,7 +282,7 @@ class Program
             winDisplay[3] = true;
             return points["FULL HOUSE"];
         }
-        if ((cardNumber[0] == cardNumber[1] - 1 && cardNumber[0] == cardNumber[2] - 2 && cardNumber[0] == cardNumber[3] - 3 && cardNumber[0] == cardNumber[4] - 4) || (cardNumber[0] == 14 && cardNumber[1] == 2 && cardNumber[2] == 3 && cardNumber[3] == 4 && cardNumber[4] == 5))
+        if ((cardNumber[0] == cardNumber[1] - 1 && cardNumber[0] == cardNumber[2] - 2 && cardNumber[0] == cardNumber[3] - 3 && cardNumber[0] == cardNumber[4] - 4) || (cardNumber[4] == 14 && cardNumber[0] == 2 && cardNumber[1] == 3 && cardNumber[2] == 4 && cardNumber[3] == 5))
         {
             // straight
             countWinnigs[5]++;
