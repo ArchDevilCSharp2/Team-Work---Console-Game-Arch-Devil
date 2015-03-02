@@ -33,7 +33,7 @@ class Program
             {"STRAIGHT", 5},
             {"3 OF A KIND", 3},
             {"TWO PAIR", 2},
-            {"ONE PAIR", 1}
+            {"HIGH PAIR", 1}
         };
 
 
@@ -80,11 +80,7 @@ class Program
 
             for (int i = 1; i <= points.Count; i++)
             {
-                var item = points.ElementAt(i - 1);
-                var itemKey = item.Key;
-                var itemValue = item.Value;
-                PrintOnPosition(1, i, itemKey);
-                PrintOnPosition(30, i, string.Concat("x", itemValue));
+                PrintWinningBlock(points, i);
             }
 
             PrintOnPosition(width - 10, 2, coins.ToString().PadLeft(10, ' '));
@@ -92,8 +88,6 @@ class Program
 
             PrintOnPosition(width - 3, 5, "BET");
             PrintOnPosition(width - 3, 6, bet.ToString().PadLeft(3, ' '));
-
-            PrintOnPosition(40, 9, "WINNINGS: " + winnings);
 
             PrintOnPosition(0, 10, new string('_', width));
             PrintOnPosition(0, 12, new string('_', width));
@@ -117,13 +111,13 @@ class Program
                     coins -= bet;
                     PrintOnPosition(width - 10, 2, coins.ToString().PadLeft(10, ' '));
                 }
-                catch (OverflowException)
+                catch (Exception)
                 {
                     bet = coins;
                     coins = 0;
                     PrintOnPosition(width - 10, 2, "ALL IN".PadLeft(10, ' '));
                     PrintOnPosition(width - 2, 6, bet.ToString().PadLeft(2, ' '));
-                    PrintOnPosition(1, 11, "YOU BET: " + bet);
+                    PrintOnPosition(20, 11, "YOUR BET: " + bet);
                 }
             }
 
@@ -152,12 +146,23 @@ class Program
 
             //Check for Winnings
 
-            int winningCoins = CheckForWinnings(playCards, winDisplay, points);
-            coins += (uint)winningCoins * bet;
-            if (winningCoins != 0)
+            uint winningCoins = CheckForWinnings(playCards, winDisplay, points);
+            coins += winningCoins * bet;
+            
+            winnings++;
+
+            for (int i = 1; i <= points.Count; i++)
             {
-                winnings++;
+                if (!winDisplay[i - 1]) continue;
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.BackgroundColor = ConsoleColor.Cyan;
+                PrintWinningBlock(points, i);
             }
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.BackgroundColor = ConsoleColor.DarkGreen;
+
+            PrintOnPosition(40, 9, "WINNINGS: " + winningCoins * bet);
 
             //Game Over or Next Deal
 
@@ -193,6 +198,15 @@ class Program
 
     }
 
+    private static void PrintWinningBlock(Dictionary<string, uint> points, int i)
+    {
+        var item = points.ElementAt(i - 1);
+        var itemKey = item.Key;
+        var itemValue = item.Value;
+        PrintOnPosition(1, i, itemKey);
+        PrintOnPosition(30, i, string.Concat("x", itemValue));
+    }
+
     private static void WriteInFile(uint[] countWinnins, uint winnings)
     {
         using (StreamWriter win = new StreamWriter("winnings.txt"))
@@ -205,45 +219,40 @@ class Program
         }
     }
 
-    private static int CheckForWinnings(string[] playCards, bool[] winDisplay, Dictionary<string, uint> points)
+    private static uint CheckForWinnings(string[] playCards, bool[] winDisplay, Dictionary<string, uint> points)
     {
-        int winning = 0;
         var cardNumber = new int[playCards.Length];
-
+        
         if (playCards[0][1] == playCards[1][1] && playCards[0][1] == playCards[2][1] && playCards[0][1] == playCards[3][1] && playCards[0][1] == playCards[4][1])
         {
             ReshapeCards(playCards, cardNumber);
 
-            if (cardNumber[0] == cardNumber[1] + 1 && cardNumber[0] == cardNumber[2] + 2 && cardNumber[0] == cardNumber[3] + 3 && cardNumber[0] == cardNumber[4] + 4)
+            if (cardNumber[0] == cardNumber[1] - 1 && cardNumber[0] == cardNumber[2] - 2 && cardNumber[0] == cardNumber[3] - 3 && cardNumber[0] == cardNumber[4] - 4)
             {
                 if (cardNumber[0] == 10)
                 {
                     //Royal flush
                     winDisplay[0] = true;
-                    winning = 500;
-                    return winning;
+                    return points["ROYAL FLUSH"];
                 }
                 else
                 {
                     //straight flush
                     winDisplay[1] = true;
-                    winning = 100;
-                    return winning;
+                    return points["STRAIGHT FLUSH"];
                 }
             }
             if (cardNumber[0] == 14 && cardNumber[1] == 2 && cardNumber[2] == 3 && cardNumber[3] == 4 && cardNumber[4] == 5)
             {
                 //straight flush
                 winDisplay[1] = true;
-                winning = 100;
-                return winning;
+                return points["STRAIGHT FLUSH"];
             }
             else
             {
                 //flush
                 winDisplay[4] = true;
-                winning = 7;
-                return winning;
+                return points["FLUSH"];
             }
         }
 
@@ -253,46 +262,40 @@ class Program
         {
             //4 of a Kind
             winDisplay[2] = true;
-            winning = 40;
-            return winning;
+            return points["4 OF A KIND"];
         }
         if ((cardNumber[0] == cardNumber[1] && cardNumber[0] == cardNumber[2] && cardNumber[3] == cardNumber[4]) || (cardNumber[0] == cardNumber[1] && cardNumber[2] == cardNumber[3] && cardNumber[2] == cardNumber[4]))
         {
             //Full House
             winDisplay[3] = true;
-            winning = 10;
-            return winning;
+            return points["FULL HOUSE"];
         }
-        if ((cardNumber[0] == cardNumber[1] + 1 && cardNumber[0] == cardNumber[2] + 2 && cardNumber[0] == cardNumber[3] + 3 && cardNumber[0] == cardNumber[4] + 4) || (cardNumber[0] == 14 && cardNumber[1] == 2 && cardNumber[2] == 3 && cardNumber[3] == 4 && cardNumber[4] == 5))
+        if ((cardNumber[0] == cardNumber[1] - 1 && cardNumber[0] == cardNumber[2] - 2 && cardNumber[0] == cardNumber[3] - 3 && cardNumber[0] == cardNumber[4] - 4) || (cardNumber[0] == 14 && cardNumber[1] == 2 && cardNumber[2] == 3 && cardNumber[3] == 4 && cardNumber[4] == 5))
         {
             // straight
             winDisplay[5] = true;
-            winning = 5;
-            return winning;
+            return points["STRAIGHT"];
         }
 
         if ((cardNumber[0] == cardNumber[1] && cardNumber[0] == cardNumber[2]) || (cardNumber[1] == cardNumber[2] && cardNumber[1] == cardNumber[3]) || (cardNumber[2] == cardNumber[3] && cardNumber[2] == cardNumber[4]))
         {
             // 3 of a kind
             winDisplay[6] = true;
-            winning = 3;
-            return winning;
+            return points["3 OF A KIND"];
         }
         if ((cardNumber[0] == cardNumber[1] && (cardNumber[2] == cardNumber[3] || cardNumber[3] == cardNumber[4])) || (cardNumber[1] == cardNumber[2] && cardNumber[3] == cardNumber[4]))
         {
             // two pair
             winDisplay[7] = true;
-            winning = 2;
-            return winning;
+            return points["TWO PAIR"];
         }
         if ((cardNumber[0] == cardNumber[1] && cardNumber[0] > 10) || (cardNumber[1] == cardNumber[2] && cardNumber[1] > 10) || (cardNumber[2] == cardNumber[3] && cardNumber[2] > 10) || (cardNumber[3] == cardNumber[4] && cardNumber[3] > 10))
         {
             // high pair
             winDisplay[8] = true;
-            winning = 1;
-            return winning;
+            return points["HIGH PAIR"];
         }
-        return winning;
+        return 0;
     }
     private static void ReshapeCards(string[] playCards, int[] cardNumber)
     {
