@@ -148,9 +148,9 @@ class Program
 
             uint winningCoins = CheckForWinnings(playCards, winDisplay, points);
             coins += winningCoins * bet;
-            
-            winnings++;
 
+            if (winnings != 0) winnings++;
+           
             for (int i = 1; i <= points.Count; i++)
             {
                 if (!winDisplay[i - 1]) continue;
