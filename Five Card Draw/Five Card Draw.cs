@@ -47,6 +47,7 @@ class Program
         uint bet = 1;
         uint maxBet = 10;
         uint coins = 100;
+        int deals = 0;
 
         Console.CursorVisible = false;
         Console.Title = title;
@@ -101,6 +102,7 @@ class Program
             Console.BackgroundColor = ConsoleColor.DarkGreen;
             Console.ForegroundColor = ConsoleColor.Yellow;
 
+            PrintOnPosition(14, 11, "Place your bet using up/down arrows");
             // Bet
             bet = Bet(bet, width, heigth, maxBet);
 
@@ -129,6 +131,7 @@ class Program
             //print card faces
             PutFaceCard(cardWidth, cardHeight, holdCards, playCards);
 
+            PrintOnPosition(14, 11, "Press 1-5 to hold/unhold cards           ");
             //Hold
             holdCards = HoldCard(holdCards);
 
@@ -149,7 +152,7 @@ class Program
             uint winningCoins = CheckForWinnings(playCards, winDisplay, points);
             coins += winningCoins * bet;
 
-            if (winnings != 0) winnings++;
+            if (winningCoins != 0) winnings++;
            
             for (int i = 1; i <= points.Count; i++)
             {
@@ -164,9 +167,12 @@ class Program
 
             PrintOnPosition(40, 9, "WINNINGS: " + winningCoins * bet);
 
+            deals++;
+
+            PrintOnPosition(14, 11, "Press spaceBar to continue - esc to exit".PadLeft(7, ' '));
             //Game Over or Next Deal
 
-            WriteInFile(countWinnigs, winnings);
+            WriteInFile(countWinnigs, winnings, deals);
 
             ConsoleKeyInfo button;
 
@@ -207,10 +213,11 @@ class Program
         PrintOnPosition(30, i, string.Concat("x", itemValue));
     }
 
-    private static void WriteInFile(uint[] countWinnins, uint winnings)
+    private static void WriteInFile(uint[] countWinnins, uint winnings, int deals)
     {
         using (StreamWriter win = new StreamWriter("winnings.txt"))
         {
+            //win.WriteLine("Total deals made {0}", deals);
             win.WriteLine("Winnings: {0}", winnings);
             for (int i = 0; i < 9; i++)
             {
@@ -232,12 +239,14 @@ class Program
                 if (cardNumber[0] == 10)
                 {
                     //Royal flush
+                    countWinnigs[0]++;
                     winDisplay[0] = true;
                     return points["ROYAL FLUSH"];
                 }
                 else
                 {
                     //straight flush
+                    countWinnigs[1]++;
                     winDisplay[1] = true;
                     return points["STRAIGHT FLUSH"];
                 }
@@ -245,12 +254,14 @@ class Program
             if (cardNumber[0] == 14 && cardNumber[1] == 2 && cardNumber[2] == 3 && cardNumber[3] == 4 && cardNumber[4] == 5)
             {
                 //straight flush
+                countWinnigs[1]++;
                 winDisplay[1] = true;
                 return points["STRAIGHT FLUSH"];
             }
             else
             {
                 //flush
+                countWinnigs[4]++;
                 winDisplay[4] = true;
                 return points["FLUSH"];
             }
@@ -261,18 +272,21 @@ class Program
         if ((cardNumber[0] == cardNumber[1] && cardNumber[0] == cardNumber[2] && cardNumber[0] == cardNumber[3]) || (cardNumber[1] == cardNumber[2] && cardNumber[1] == cardNumber[3] && cardNumber[1] == cardNumber[4]))
         {
             //4 of a Kind
+            countWinnigs[2]++;
             winDisplay[2] = true;
             return points["4 OF A KIND"];
         }
         if ((cardNumber[0] == cardNumber[1] && cardNumber[0] == cardNumber[2] && cardNumber[3] == cardNumber[4]) || (cardNumber[0] == cardNumber[1] && cardNumber[2] == cardNumber[3] && cardNumber[2] == cardNumber[4]))
         {
             //Full House
+            countWinnigs[3]++;
             winDisplay[3] = true;
             return points["FULL HOUSE"];
         }
         if ((cardNumber[0] == cardNumber[1] - 1 && cardNumber[0] == cardNumber[2] - 2 && cardNumber[0] == cardNumber[3] - 3 && cardNumber[0] == cardNumber[4] - 4) || (cardNumber[0] == 14 && cardNumber[1] == 2 && cardNumber[2] == 3 && cardNumber[3] == 4 && cardNumber[4] == 5))
         {
             // straight
+            countWinnigs[5]++;
             winDisplay[5] = true;
             return points["STRAIGHT"];
         }
@@ -280,18 +294,21 @@ class Program
         if ((cardNumber[0] == cardNumber[1] && cardNumber[0] == cardNumber[2]) || (cardNumber[1] == cardNumber[2] && cardNumber[1] == cardNumber[3]) || (cardNumber[2] == cardNumber[3] && cardNumber[2] == cardNumber[4]))
         {
             // 3 of a kind
+            countWinnigs[6]++;
             winDisplay[6] = true;
             return points["3 OF A KIND"];
         }
         if ((cardNumber[0] == cardNumber[1] && (cardNumber[2] == cardNumber[3] || cardNumber[3] == cardNumber[4])) || (cardNumber[1] == cardNumber[2] && cardNumber[3] == cardNumber[4]))
         {
             // two pair
+            countWinnigs[7]++;
             winDisplay[7] = true;
             return points["TWO PAIR"];
         }
         if ((cardNumber[0] == cardNumber[1] && cardNumber[0] > 10) || (cardNumber[1] == cardNumber[2] && cardNumber[1] > 10) || (cardNumber[2] == cardNumber[3] && cardNumber[2] > 10) || (cardNumber[3] == cardNumber[4] && cardNumber[3] > 10))
         {
             // high pair
+            countWinnigs[8]++;
             winDisplay[8] = true;
             return points["HIGH PAIR"];
         }
@@ -311,27 +328,27 @@ class Program
         Array.Sort(cardNumber);
     }
 
-    // this is for the console to print in black-yellow-black-yellow what you win.
-    private static void PrintMatch(int p1, int p2, string win)
-    {
-        Console.ForegroundColor = ConsoleColor.Black;
-        PrintOnPosition(p1, p2, win);
-        Thread.Sleep(300);
-        Console.ForegroundColor = ConsoleColor.Yellow;
-        PrintOnPosition(p1, p2, win);
-        Thread.Sleep(300);
-        Console.ForegroundColor = ConsoleColor.Black;
-        PrintOnPosition(p1, p2, win);
-        Thread.Sleep(300);
-        Console.ForegroundColor = ConsoleColor.Yellow;
-        PrintOnPosition(p1, p2, win);
-        Thread.Sleep(300);
-        Console.ForegroundColor = ConsoleColor.Black;
-        PrintOnPosition(p1, p2, win);
-        Thread.Sleep(300);
-        Console.ForegroundColor = ConsoleColor.Yellow;
-        PrintOnPosition(p1, p2, win);
-    }
+    //// this is for the console to print in black-yellow-black-yellow what you win.
+    //private static void PrintMatch(int p1, int p2, string win)
+    //{
+    //    Console.ForegroundColor = ConsoleColor.Black;
+    //    PrintOnPosition(p1, p2, win);
+    //    Thread.Sleep(300);
+    //    Console.ForegroundColor = ConsoleColor.Yellow;
+    //    PrintOnPosition(p1, p2, win);
+    //    Thread.Sleep(300);
+    //    Console.ForegroundColor = ConsoleColor.Black;
+    //    PrintOnPosition(p1, p2, win);
+    //    Thread.Sleep(300);
+    //    Console.ForegroundColor = ConsoleColor.Yellow;
+    //    PrintOnPosition(p1, p2, win);
+    //    Thread.Sleep(300);
+    //    Console.ForegroundColor = ConsoleColor.Black;
+    //    PrintOnPosition(p1, p2, win);
+    //    Thread.Sleep(300);
+    //    Console.ForegroundColor = ConsoleColor.Yellow;
+    //    PrintOnPosition(p1, p2, win);
+    //}
 
     private static void PutFaceCard(int cardWidth, int cardHeight, bool[] holdCards, string[] playCards)
     {
@@ -381,8 +398,6 @@ class Program
         // sound for you bet
         Console.Beep(700, 200);
         Console.Beep(700, 200);
-
-        PrintOnPosition(1, 11, "YOU BET: " + bet);
 
         return bet;
     }
