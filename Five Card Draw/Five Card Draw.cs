@@ -66,11 +66,8 @@ class Program
             bool[] winDisplay = new bool[points.Count];
             Console.BackgroundColor = ConsoleColor.DarkGreen;
             Console.Clear();
-
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.BackgroundColor = ConsoleColor.DarkGreen;
-            Console.WriteLine();
-
 
             for (int i = 1; i <= points.Count; i++)
             {
@@ -331,7 +328,7 @@ class Program
     {
         for (int i = 0, j = 0; j < 5; i += 11, j++)
         {
-            if (holdCards[j] == true) continue;
+            if (holdCards[j]) continue;
 
             if (playCards[j].Contains("\u2660") || playCards[j].Contains("\u2663")) Console.ForegroundColor = ConsoleColor.Black;
             else Console.ForegroundColor = ConsoleColor.Red;
@@ -701,7 +698,7 @@ class Program
     {
         for (int i = 0; i < 5; i++)
         {
-            if (holdCards[i] == true) continue;
+            if (holdCards[i]) continue;
             playCards[i] = deck[r.Next(0, deck.GetLength(0)), r.Next(0, deck.GetLength(1))];
             if (drawedCards.Contains(playCards[i]))
             {
