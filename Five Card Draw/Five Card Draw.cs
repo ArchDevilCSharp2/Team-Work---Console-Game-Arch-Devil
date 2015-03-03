@@ -373,7 +373,7 @@ class Program
             }
 
 
-        } while (keyPressed.Key != ConsoleKey.Spacebar);
+        } while (keyPressed.Key != ConsoleKey.Spacebar && keyPressed.Key != ConsoleKey.Enter);
 
         // sound for you bet
         Console.Beep(700, 200);
@@ -479,7 +479,7 @@ class Program
                     PrintOnPosition(50, 21, "    ");
                 }
             }
-        } while (keyPressed.Key != ConsoleKey.Spacebar);
+        } while (keyPressed.Key != ConsoleKey.Spacebar && keyPressed.Key != ConsoleKey.Enter);
 
         Console.Beep(700, 200);
         Console.Beep(700, 200);
