@@ -130,7 +130,7 @@ class Program
 
             for (int i = 0, j = 0; j < 5; i += 11, j++)
             {
-                if (holdCards[j] == true) continue;
+                if (holdCards[j]) continue;
                 CardBack(cardHeight, cardWidth, i + 4, 14);
             }
             Thread.Sleep(500);
